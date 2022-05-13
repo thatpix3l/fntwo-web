@@ -35,3 +35,5 @@ gltfLoader.load("/kilometers morales project.glb", (gltf) => {
     const root = gltf.scene;
     scene.add(root);
 });
+
+console.log("lmao");
