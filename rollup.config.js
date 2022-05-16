@@ -13,7 +13,7 @@ export default {
     dir: 'build',
     format: 'es',
     assetFileNames: "[name]-[hash][extname]",
-    sourcemap: !production
+    sourcemap: !production // Generate sourcemaps when not in production
   },
   plugins: [
     nodeResolve(),
@@ -22,8 +22,8 @@ export default {
     }),
     serve("build/"),
     typescript(),
-    !production && livereload("src/"), // Live reload in production
-    production && terser() // minify, but only in production
+    !production && livereload("src/"), // Live reload when not in production
+    production && terser() // Minify in production
   ]
 
 }
