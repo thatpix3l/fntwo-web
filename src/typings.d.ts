@@ -1,77 +1,142 @@
-type bone = {
-    position_x: number,
-    position_y: number,
-    position_z: number,
-
-    quaternion_x: number,
-    quaternion_y: number,
-    quaternion_z: number,
-    quaternion_w: number,
+type payloadBonePosition = {
+    x: number,
+    y: number,
+    z: number
 }
 
-export type VRMBones = {
-    TongueOut: bone
-    Hips: bone
-    LeftUpperLeg: bone
-    RightUpperLeg: bone
-    LeftLowerLeg: bone
-    RightLowerLeg: bone
-    LeftFoot: bone
-    RightFoot: bone
-    Spine: bone
-    Chest: bone
-    UpperChest: bone
-    Neck: bone
-    Head: bone
-    LeftShoulder: bone
-    RightShoulder: bone
-    LeftUpperArm: bone
-    RightUpperArm: bone
-    LeftLowerArm: bone
-    RightLowerArm: bone
-    LeftHand: bone
-    RightHand: bone
-    LeftToes: bone
-    RightToes: bone
-    LeftEye: bone
-    RightEye: bone
-    Jaw: bone
-    LeftThumbProximal: bone
-    LeftThumbIntermediate: bone
-    LeftThumbDistal: bone
-    LeftIndexProximal: bone
-    LeftIndexIntermediate: bone
-    LeftIndexDistal: bone
-    LeftMiddleProximal: bone
-    LeftMiddleIntermediate: bone
-    LeftMiddleDistal: bone
-    LeftRingProximal: bone
-    LeftRingIntermediate: bone
-    LeftRingDistal: bone
-    LeftLittleProximal: bone
-    LeftLittleIntermediate: bone
-    LeftLittleDistal: bone
-    RightThumbProximal: bone
-    RightThumbIntermediate: bone
-    RightThumbDistal: bone
-    RightIndexProximal: bone
-    RightIndexIntermediate: bone
-    RightIndexDistal: bone
-    RightMiddleProximal: bone
-    RightMiddleIntermediate: bone
-    RightMiddleDistal: bone
-    RightRingProximal: bone
-    RightRingIntermediate: bone
-    RightRingDistal: bone
-    RightLittleProximal: bone
-    RightLittleIntermediate: bone
-    RightLittleDistal: bone
-    LastBone: bone
+type payloadQuaternionRotation = {
+    x: number,
+    y: number,
+    z: number,
+    w: number
 }
 
-export type VRMPayload = {
-    payload_type: string,
-    name: string,
-    bones: VRMBones,
-    blend_shapes: number
+type vrmBoneRotation = {
+    quaternion: payloadQuaternionRotation,
+    //euler: eulerRotation
+}
+
+type payloadSingleBone = {
+    position: payloadBonePosition,
+    rotation: vrmBoneRotation
+}
+
+export type payloadBones = {
+    tongue_out: payloadSingleBone,
+    hips: payloadSingleBone,
+    left_upper_leg: payloadSingleBone,
+    right_upper_leg: payloadSingleBone,
+    left_lower_leg: payloadSingleBone,
+    right_lower_leg: payloadSingleBone,
+    left_foot: payloadSingleBone,
+    right_foot: payloadSingleBone,
+    spine: payloadSingleBone,
+    chest: payloadSingleBone,
+    upper_chest: payloadSingleBone,
+    neck: payloadSingleBone,
+    head: payloadSingleBone,
+    left_shoulder: payloadSingleBone,
+    right_shoulder: payloadSingleBone,
+    left_upper_arm: payloadSingleBone,
+    right_upper_arm: payloadSingleBone,
+    left_lower_arm: payloadSingleBone,
+    right_lower_arm: payloadSingleBone,
+    left_hand: payloadSingleBone,
+    right_hand: payloadSingleBone,
+    left_toes: payloadSingleBone,
+    right_toes: payloadSingleBone,
+    left_eye: payloadSingleBone,
+    right_eye: payloadSingleBone,
+    jaw: payloadSingleBone,
+    left_thumb_proximal: payloadSingleBone,
+    left_thumb_intermediate: payloadSingleBone,
+    left_thumb_distal: payloadSingleBone,
+    left_index_proximal: payloadSingleBone,
+    left_index_intermediate: payloadSingleBone,
+    left_index_distal: payloadSingleBone,
+    left_middle_proximal: payloadSingleBone,
+    left_middle_intermediate: payloadSingleBone,
+    left_middle_distal: payloadSingleBone,
+    left_ring_proximal: payloadSingleBone,
+    left_ring_intermediate: payloadSingleBone,
+    left_ring_distal: payloadSingleBone,
+    left_little_proximal: payloadSingleBone,
+    left_little_intermediate: payloadSingleBone,
+    left_little_distal: payloadSingleBone,
+    right_thumb_proximal: payloadSingleBone,
+    right_thumb_intermediate: payloadSingleBone,
+    right_thumb_distal: payloadSingleBone,
+    right_index_proximal: payloadSingleBone,
+    right_index_intermediate: payloadSingleBone,
+    right_index_distal: payloadSingleBone,
+    right_middle_proximal: payloadSingleBone,
+    right_middle_intermediate: payloadSingleBone,
+    right_middle_distal: payloadSingleBone,
+    right_ring_proximal: payloadSingleBone,
+    right_ring_intermediate: payloadSingleBone,
+    right_ring_distal: payloadSingleBone,
+    right_little_proximal: payloadSingleBone,
+    right_little_intermediate: payloadSingleBone,
+    right_little_distal: payloadSingleBone,
+    last_bone: payloadSingleBone
+}
+
+type payloadBlendShapes = {
+    eye_blink_left: number,
+    eye_look_down_left: number,
+    eye_look_in_left: number,
+    eye_look_out_left: number,
+    eye_look_up_left: number,
+    eye_squint_left: number,
+    eye_wide_left: number,
+    eye_blink_right: number,
+    eye_look_down_right: number,
+    eye_look_in_right: number,
+    eye_look_out_right: number,
+    eye_look_up_right: number,
+    eye_squint_right: number,
+    eye_wide_right: number,
+    jaw_forward: number,
+    jaw_left: number,
+    jaw_right: number,
+    jaw_open: number,
+    mouth_close: number,
+    mouth_funnel: number,
+    mouth_pucker: number,
+    mouth_left: number,
+    mouth_right: number,
+    mouth_smile_left: number,
+    mouth_smile_right: number,
+    mouth_frown_left: number,
+    mouth_frown_right: number,
+    mouth_dimple_left: number,
+    mouth_dimple_right: number,
+    mouth_stretch_left: number,
+    mouth_stretch_right: number,
+    mouth_roll_lower: number,
+    mouth_roll_upper: number,
+    mouth_shrug_lower: number,
+    mouth_shrug_upper: number,
+    mouth_press_left: number,
+    mouth_press_right: number,
+    mouth_lower_down_left: number,
+    mouth_lower_down_right: number,
+    mouth_upper_up_left: number,
+    mouth_upper_up_right: number,
+    brow_down_left: number,
+    brow_down_right: number,
+    brow_inner_up: number,
+    brow_outer_up_left: number,
+    brow_outer_up_right: number,
+    cheek_puff: number,
+    cheek_squint_left: number,
+    cheek_squint_right: number,
+    nose_sneer_left: number,
+    nose_sneer_right: number,
+    tongue_out: number
+}
+
+export type vrmPayload = {
+    bones: payloadBones,
+    blend_shapes: payloadBlendShapes
 }

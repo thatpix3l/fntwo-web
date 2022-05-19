@@ -18,7 +18,12 @@ document.body.appendChild(renderer.domElement);
 const clock: THREE.Clock = new THREE.Clock();
 const scene: THREE.Scene = new THREE.Scene();
 const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, -7);
+camera.position.set(0, 0, -7); // For some reason, the camera-controls library doesn't work unless I manually set the camera position
+
+// Lighting
+const light = new THREE.PointLight(0xffffff, 1, 100);
+light.position.set(5, 20, 5);
+scene.add(light);
 
 // Camera controls
 const camera_controls: CameraControls = new CameraControls(camera, renderer.domElement);
@@ -77,6 +82,7 @@ scene.add(gridHelper);
 
 // Reference to character model properties we care about changing
 let vrmModel: VRM;
+const vrmModelBones: { [boneName: string]: GLTFNode } = {};
 
 // Model loader
 const load_model = (model_path: string) => {
@@ -89,6 +95,9 @@ const load_model = (model_path: string) => {
         const new_vrm: VRM = (await VRM.from(gltf));
 
         vrmModel = new_vrm;
+        for (const [k, v] of Object.entries(VRMSchema.HumanoidBoneName)) {
+            vrmModelBones[k] = vrmModel.humanoid.getBoneNode(v);
+        }
 
         // Add VRM to scene       
         scene.add(new_vrm.scene);
@@ -99,6 +108,36 @@ const load_model = (model_path: string) => {
 
 };
 
+// Transform position and rotation of a given GLTF node with the props of a given VRM bone 
+const transform_bone = (gltf_node: GLTFNode, bone_transform: TYPINGS.payloadSingleBone) => {
+
+    for(const key of Object.keys(bone_transform.rotation.quaternion)) {
+        if(key in gltf_node.quaternion) {
+            gltf_node.quaternion[key] = bone_transform.rotation.quaternion[key];
+        }
+    }
+
+}
+
+// Process and use VRM payload from a given message event
+const process_vrm_payload = (ev: MessageEvent<any>) => {
+
+    // Assume given data is of type VRMPayload
+    const new_vrm: TYPINGS.vrmPayload = JSON.parse(ev.data);
+
+    // Attempt to update bone data
+    try {
+
+        transform_bone(vrmModelBones["Head"], new_vrm.bones.head);
+
+    } catch (e) {
+        return
+
+    }
+
+}
+
+// WebSocket handler for communicating with internal API for VRM transformations
 const model_tracking_sock = (ws_url: string) => {
 
     let ws = new WebSocket(ws_url);
@@ -107,34 +146,8 @@ const model_tracking_sock = (ws_url: string) => {
         console.log("Connected to websocket!");
     };
 
-    // Transform model according to what was just received from backend
-    ws.onmessage = (ev) => {
-        const new_vrm_payload: TYPINGS.VRMPayload = JSON.parse(ev.data);
-        const payload_key: string = new_vrm_payload.name;
-        const payload_type: string = new_vrm_payload.payload_type;
-        const payload_bone: TYPINGS.bone = new_vrm_payload.bones[payload_key];
-
-        const current_bone = vrmModel.humanoid.getBoneNode(VRMSchema.HumanoidBoneName[payload_key]);
-
-        if (current_bone === null) {
-            console.log("Bone " + payload_key + " is missing");
-            return
-        }
-
-        /*
-        current_bone.position.x = new_vrm_payload.bones.Head.position_x;
-        current_bone.position.y = new_vrm_payload.bones.Head.position_y;
-        current_bone.position.z = new_vrm_payload.bones.Head.position_z;
-        */
-
-        current_bone.quaternion.x = payload_bone.quaternion_x;
-        current_bone.quaternion.y = payload_bone.quaternion_y;
-        current_bone.quaternion.z = payload_bone.quaternion_z;
-        current_bone.quaternion.w = payload_bone.quaternion_w;
-
-        console.log(current_bone);
-
-    };
+    // Callback for handling VRM transformation data
+    ws.onmessage = process_vrm_payload;
 
     ws.onclose = function (ev) {
         console.log('Socket is closed. Reconnect will be attempted in 1 second.', ev.reason);
@@ -150,6 +163,6 @@ const model_tracking_sock = (ws_url: string) => {
 
 };
 
-load_model("/kilometers morales T-POSE.vrm");
 load_model("/bruh.vrm");
+//load_model("/kilometers morales T-POSE.vrm");
 model_tracking_sock("ws://127.0.0.1:3579/api/model");
