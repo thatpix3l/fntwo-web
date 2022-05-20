@@ -4,36 +4,103 @@ import { GLTFNode, VRM, VRMHumanBones, VRMHumanoid, VRMSchema } from '@pixiv/thr
 import CameraControls from 'camera-controls';
 import * as TYPINGS from "./typings";
 
+// Document styling
 document.body.style.margin = "0";
 document.body.style.padding = "0";
-
-CameraControls.install({ THREE: THREE });
 
 // WebGL Renderer
 const renderer: THREE.WebGLRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
-// Scene and camera
+// Main scene
 const clock: THREE.Clock = new THREE.Clock();
-const scene: THREE.Scene = new THREE.Scene();
-const camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 0, -7); // For some reason, the camera-controls library doesn't work unless I manually set the camera position
+const mainScene: THREE.Scene = new THREE.Scene();
 
 // Lighting
 const light = new THREE.PointLight(0xffffff, 1, 100);
 light.position.set(5, 20, 5);
-scene.add(light);
+mainScene.add(light);
+
+// Camera
+const main_camera: THREE.PerspectiveCamera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 1000);
+main_camera.position.set(0, 2, -2); // For some reason, the camera-controls library doesn't work unless I manually set the camera position
 
 // Camera controls
-const camera_controls: CameraControls = new CameraControls(camera, renderer.domElement);
+CameraControls.install({ THREE: THREE }); // Prequisite for using camera-controls package
+const main_camera_controls: CameraControls = new CameraControls(main_camera, renderer.domElement);
 const camera_velocity: number = 0.1;
 
-// Initial camera controls position
-camera_controls.rotate(0, THREE.MathUtils.degToRad(-20));
+// Camera transformation vars to help when user decides to manually change camera positioning
+let live_camera_data: TYPINGS.cameraPayload;
+let camera_ws: WebSocket;
+
+// WebSocket handler for reading in the current state of the camera
+const camera_transform_sock = (ws_url: string) => {
+
+    console.log("Attempting to create a new camera WebSocket...");
+
+    camera_ws = new WebSocket(ws_url);
+
+    camera_ws.onopen = (ev) => {
+        console.log("Successfully connected to camera transformation socket!");
+    };
+
+    // Callback for handling received camera transformation data
+    camera_ws.onmessage = process_camera_payload;
+
+    camera_ws.onclose = function (ev) {
+        console.log('Socket is closed. Reconnect will be attempted in 1 second.', ev.reason);
+        setTimeout(function () {
+            camera_transform_sock(ws_url);
+        }, 1000);
+    };
+
+    camera_ws.onerror = function (ev) {
+        console.error('Socket encountered error:', ev, 'Closing socket');
+        camera_ws.close();
+    };
+
+}
+
+camera_transform_sock("ws://127.0.0.1:3579/api/camera");
+
+// Get the current positioning and rotation of a given camera, send it to given WebSocket
+const send_camera_data = (camera: THREE.OrthographicCamera | THREE.PerspectiveCamera, camera_controls: CameraControls) => {
+    console.log("Sending current scene's camera data to backend...");
+
+    let target_vect: THREE.Vector3;
+    let camera_vect: THREE.Vector3;
+    target_vect = camera_controls.getTarget(target_vect)
+    camera_vect = camera_controls.getPosition(camera_vect)
+
+    // Var for storing current camera position and rotation
+    let new_camera_data: TYPINGS.cameraPayload = {
+        position: {
+            x: camera_vect.x,
+            y: camera_vect.y,
+            z: camera_vect.z
+        },
+        target: {
+            x: target_vect.x,
+            y: target_vect.y,
+            z: target_vect.z
+        }
+    }
+
+    // Send camera data to backend
+    camera_ws.send(JSON.stringify(new_camera_data));
+
+}
+
+// Every time the camera stops being moved by the user, send the current camera coords
+main_camera_controls.addEventListener('controlend', () => {
+    send_camera_data(main_camera, main_camera_controls);
+});
 
 // Keyboard input event listeners, to remove delay
-let keyState = {};
+let keyState: { [keyName: string]: boolean } = {};
+
 document.addEventListener('keydown', (ev) => {
     keyState[ev.key] = true;
 }, true);
@@ -42,34 +109,42 @@ document.addEventListener('keyup', (ev) => {
     keyState[ev.key] = false;
 }, true);
 
-// Rendering loop
-const animate = () => {
+// Camera controls wrapper
+const modify_camera = () => {
 
-    // Keyboard Controls
-    if(keyState["a"]) {
-        camera_controls.truck(-camera_velocity, 0, false);
+    // Keyboard Controls for camera
+    if (keyState["a"]) {
+        main_camera_controls.truck(-camera_velocity, 0, false);
     }
 
-    if(keyState["d"]) {
-        camera_controls.truck(camera_velocity, 0, false);
+    if (keyState["d"]) {
+        main_camera_controls.truck(camera_velocity, 0, false);
     }
 
-    if(keyState["w"]) {
-        camera_controls.forward(camera_velocity, false);
-    }   
+    if (keyState["w"]) {
+        main_camera_controls.forward(camera_velocity, false);
+    }
 
-    if(keyState["s"]) {
-        camera_controls.forward(-camera_velocity, false);
+    if (keyState["s"]) {
+        main_camera_controls.forward(-camera_velocity, false);
     }
 
     // Update camera position
     const delta = clock.getDelta();
-	camera_controls.update(delta);
+    main_camera_controls.update(delta);
+
+}
+
+// Rendering loop
+const animate = () => {
+
+    // Check for camera changes, update it
+    modify_camera();
 
     // Render scene
     requestAnimationFrame(animate);
 
-    renderer.render(scene, camera);
+    renderer.render(mainScene, main_camera);
 
 };
 animate();
@@ -78,11 +153,10 @@ animate();
 const size = 10;
 const divisions = 10;
 const gridHelper = new THREE.GridHelper(size, divisions);
-scene.add(gridHelper);
+mainScene.add(gridHelper);
 
-// Reference to character model properties we care about changing
+// Reference to VRM character model
 let vrmModel: VRM;
-const vrmModelBones: { [boneName: string]: GLTFNode } = {};
 
 // Model loader
 const load_model = (model_path: string) => {
@@ -92,15 +166,10 @@ const load_model = (model_path: string) => {
     gltfLoader.load(model_path, async (gltf) => {
 
         // Create and store VRM representation from loaded GLTF
-        const new_vrm: VRM = (await VRM.from(gltf));
-
-        vrmModel = new_vrm;
-        for (const [k, v] of Object.entries(VRMSchema.HumanoidBoneName)) {
-            vrmModelBones[k] = vrmModel.humanoid.getBoneNode(v);
-        }
+        vrmModel = (await VRM.from(gltf));
 
         // Add VRM to scene       
-        scene.add(new_vrm.scene);
+        mainScene.add(vrmModel.scene);
 
     },
         (progress) => console.log(progress),
@@ -111,8 +180,8 @@ const load_model = (model_path: string) => {
 // Transform position and rotation of a given GLTF node with the props of a given VRM bone 
 const transform_bone = (gltf_node: GLTFNode, bone_transform: TYPINGS.payloadSingleBone) => {
 
-    for(const key of Object.keys(bone_transform.rotation.quaternion)) {
-        if(key in gltf_node.quaternion) {
+    for (const key of Object.keys(bone_transform.rotation.quaternion)) {
+        if (key in gltf_node.quaternion) {
             gltf_node.quaternion[key] = bone_transform.rotation.quaternion[key];
         }
     }
@@ -128,12 +197,29 @@ const process_vrm_payload = (ev: MessageEvent<any>) => {
     // Attempt to update bone data
     try {
 
-        transform_bone(vrmModelBones["Head"], new_vrm.bones.head);
+        transform_bone(vrmModel.humanoid.getBone(VRMSchema.HumanoidBoneName.Head).node, new_vrm.bones.head);
 
     } catch (e) {
         return
 
     }
+
+}
+
+const process_camera_payload = (ev: MessageEvent<any>) => {
+    console.log("Updating scene's camera data from backend...");
+
+    live_camera_data = JSON.parse(ev.data);
+
+    main_camera_controls.setLookAt(
+        live_camera_data.position.x,
+        live_camera_data.position.y,
+        live_camera_data.position.z,
+        live_camera_data.target.x,
+        live_camera_data.target.y,
+        live_camera_data.target.z,
+        false,
+    );
 
 }
 
@@ -143,7 +229,7 @@ const model_tracking_sock = (ws_url: string) => {
     let ws = new WebSocket(ws_url);
 
     ws.onopen = (ev) => {
-        console.log("Connected to websocket!");
+        console.log("Successfully connected to model tracking WebSocket!");
     };
 
     // Callback for handling VRM transformation data
@@ -153,7 +239,7 @@ const model_tracking_sock = (ws_url: string) => {
         console.log('Socket is closed. Reconnect will be attempted in 1 second.', ev.reason);
         setTimeout(function () {
             model_tracking_sock(ws_url);
-        }, 2000);
+        }, 1000);
     };
 
     ws.onerror = function (ev) {
@@ -163,6 +249,8 @@ const model_tracking_sock = (ws_url: string) => {
 
 };
 
+// Load VRM model
 load_model("/bruh.vrm");
-//load_model("/kilometers morales T-POSE.vrm");
+
+// Read in VRM model positioning data
 model_tracking_sock("ws://127.0.0.1:3579/api/model");

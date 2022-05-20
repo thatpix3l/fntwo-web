@@ -1,27 +1,26 @@
-type payloadBonePosition = {
+type objPosition = {
     x: number,
     y: number,
     z: number
 }
 
-type payloadQuaternionRotation = {
+type quaternionRotation = {
     x: number,
     y: number,
     z: number,
     w: number
 }
 
-type vrmBoneRotation = {
-    quaternion: payloadQuaternionRotation,
-    //euler: eulerRotation
+type boneRotation = {
+    quaternion: quaternionRotation,
 }
 
 type payloadSingleBone = {
-    position: payloadBonePosition,
-    rotation: vrmBoneRotation
+    position: objPosition,
+    rotation: boneRotation
 }
 
-export type payloadBones = {
+type payloadBones = {
     tongue_out: payloadSingleBone,
     hips: payloadSingleBone,
     left_upper_leg: payloadSingleBone,
@@ -139,4 +138,13 @@ type payloadBlendShapes = {
 export type vrmPayload = {
     bones: payloadBones,
     blend_shapes: payloadBlendShapes
+}
+
+export type cameraMetaContainer = {
+    ws: WebSocket
+}
+
+type cameraPayload = {
+    position: objPosition,
+    target: objPosition
 }
