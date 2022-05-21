@@ -148,3 +148,8 @@ type cameraPayload = {
     position: objPosition,
     target: objPosition
 }
+
+// At first, I thought TypeScript was cool. Now, I am beyond frustrated with the verbosity of assignments,
+// the multitudes of different ways to do the exact same thing, and the interface-type-class crap that
+// seem like they do the exact same things; but they don't. I am beyond tired, and hope whomever decides
+// to work on this spaghetti code is comfortable with TypeScript, because I sure as hell am not.
