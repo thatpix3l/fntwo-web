@@ -218,7 +218,7 @@ const process_camera_payload = (ev: MessageEvent<any>) => {
         live_camera_data.target.x,
         live_camera_data.target.y,
         live_camera_data.target.z,
-        false,
+        true,
     );
 
 }
