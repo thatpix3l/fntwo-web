@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import { GLTFNode, VRM, VRMHumanBones, VRMHumanoid, VRMSchema } from '@pixiv/three-vrm';
+import { GLTFNode, VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
 import * as TYPINGS from "./typings";
 
@@ -142,6 +142,10 @@ const animate = () => {
     // Check for camera changes, update it
     modify_camera();
 
+    try {
+        vrmModel.blendShapeProxy.update()
+    } catch (e) { }
+
     // Render scene
     requestAnimationFrame(animate);
 
@@ -178,30 +182,42 @@ const load_model = (model_path: string) => {
 
 };
 
-// Transform position and rotation of a given GLTF node with the props of a given VRM bone 
-const transform_bone = (gltf_node: GLTFNode, bone_transform: TYPINGS.payloadSingleBone) => {
-
-    for (const key of Object.keys(bone_transform.rotation.quaternion)) {
-        if (key in gltf_node.quaternion) {
-            gltf_node.quaternion[key] = bone_transform.rotation.quaternion[key];
-        }
-    }
-
-}
-
 // Process and use VRM payload from a given message event
 const process_vrm_payload = (ev: MessageEvent<any>) => {
 
-    // Assume given data is of type VRMPayload
+    // Assume given data is of type vrmPayload
     const new_vrm: TYPINGS.vrmPayload = JSON.parse(ev.data);
 
-    // Attempt to update bone data
     try {
 
-        transform_bone(vrmModel.humanoid.getBone(VRMSchema.HumanoidBoneName.Head).node, new_vrm.bones.head);
+        // Attempt to update blend shapes
+        for (const key of Object.keys(new_vrm.blend_shapes.face)) {
+            vrmModel.blendShapeProxy.setValue("BlendShape." + key, new_vrm.blend_shapes.face[key])
+        }
+
+        // For each name of all bones available in the VRMSchema, update with new data equivalent from backend
+        for (const key of Object.keys(new_vrm.bones)) {
+
+            // Get the GLTF 3D object to manipulate
+            const model_bone: GLTFNode = vrmModel.humanoid.getBoneNode(VRMSchema.HumanoidBoneName[key]);
+
+            // Store reference to the equivalent key with new transformations
+            const new_bone: TYPINGS.payloadSingleBone = new_vrm.bones[key];
+
+            // Create new quaternion to rotate towards, based off of new_bone transformations
+            const target_rotation = new THREE.Quaternion(
+                -new_bone.rotation.quaternion.x,
+                new_bone.rotation.quaternion.y,
+                new_bone.rotation.quaternion.z,
+                new_bone.rotation.quaternion.w,
+            );
+
+            // Rotate bone
+            model_bone.quaternion.slerp(target_rotation, .5);
+
+        }
 
     } catch (e) {
-        return
 
     }
 
