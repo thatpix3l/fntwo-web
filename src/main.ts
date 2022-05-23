@@ -67,7 +67,7 @@ const camera_transform_sock = (ws_url: string) => {
 camera_transform_sock("ws://127.0.0.1:3579/api/camera");
 
 // Get the current positioning and rotation of a given camera, send it to given WebSocket
-const send_camera_data = (camera: THREE.OrthographicCamera | THREE.PerspectiveCamera, camera_controls: CameraControls) => {
+const send_camera_data = (camera_controls: CameraControls) => {
     console.log("Sending current scene's camera data to backend...");
 
     let target_vect: THREE.Vector3;
@@ -96,7 +96,7 @@ const send_camera_data = (camera: THREE.OrthographicCamera | THREE.PerspectiveCa
 
 // Every time the camera stops being moved by the user, send the current camera coords
 main_camera_controls.addEventListener('controlend', () => {
-    send_camera_data(main_camera, main_camera_controls);
+    send_camera_data(main_camera_controls);
 });
 
 // Keyboard input event listeners, to remove delay
