@@ -1,5 +1,6 @@
 {
   "name": "vanezo-frontend",
+  "version": "0.1.0",
   "dependencies": {
     "three": "^0.140.2"
   },
