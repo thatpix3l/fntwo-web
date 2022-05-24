@@ -21,6 +21,7 @@ type payloadSingleBone = {
 }
 
 type payloadBones = {
+    [BoneName: string]: payloadSingleBone,
     Hips: payloadSingleBone,
     LeftUpperLeg: payloadSingleBone,
     RightUpperLeg: payloadSingleBone,
@@ -80,6 +81,7 @@ type payloadBones = {
 }
 
 type payloadBlendShapes = {
+    [BlendShapeName: string]: number,
     EyeBlinkLeft: number,
     EyeLookDownLeft: number,
     EyeLookInLeft: number,

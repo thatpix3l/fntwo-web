@@ -83,10 +83,10 @@ camera_transform_sock(getWebSocket("127.0.0.1:3579/api/camera"));
 const send_camera_data = (camera_controls: CameraControls) => {
     console.log("Sending current scene's camera data to backend...");
 
-    let target_vect: THREE.Vector3;
-    let camera_vect: THREE.Vector3;
-    target_vect = camera_controls.getTarget(target_vect)
-    camera_vect = camera_controls.getPosition(camera_vect)
+    let target_vect = new THREE.Vector3;
+    let camera_vect = new THREE.Vector3;
+    target_vect = camera_controls.getTarget(target_vect);
+    camera_vect = camera_controls.getPosition(camera_vect);
 
     // Var for storing current camera position and rotation
     let new_camera_data: TYPINGS.cameraPayload = {
@@ -159,10 +159,10 @@ const animate = () => {
     try {
 
         // Update blend shapes
-        vrmModel.blendShapeProxy.update()
+        vrmModel.blendShapeProxy?.update()
 
         // Update spring bones
-        vrmModel.springBoneManager.lateUpdate(delta);
+        vrmModel.springBoneManager?.lateUpdate(delta);
 
     } catch (e) { }
 
@@ -212,14 +212,16 @@ const process_vrm_payload = (ev: MessageEvent<any>) => {
 
         // Attempt to update blend shapes
         for (const key of Object.keys(new_vrm.blend_shapes.face)) {
-            vrmModel.blendShapeProxy.setValue("BlendShape." + key, new_vrm.blend_shapes.face[key])
+            vrmModel.blendShapeProxy?.setValue("BlendShape." + key, new_vrm.blend_shapes.face[key])
         }
 
         // For each name of all bones available in the VRMSchema, update with new data equivalent from backend
         for (const key of Object.keys(new_vrm.bones)) {
 
             // Get the GLTF 3D object to manipulate
-            const model_bone: GLTFNode = vrmModel.humanoid.getBoneNode(VRMSchema.HumanoidBoneName[key]);
+            // @ts-ignore
+            const schema_bone = VRMSchema.HumanoidBoneName[key];
+            const model_bone = vrmModel.humanoid?.getBoneNode(schema_bone);
 
             // Store reference to the equivalent key with new transformations
             const new_bone: TYPINGS.payloadSingleBone = new_vrm.bones[key];
@@ -233,7 +235,7 @@ const process_vrm_payload = (ev: MessageEvent<any>) => {
             );
 
             // Rotate bone
-            model_bone.quaternion.slerp(target_rotation, .5);
+            model_bone?.quaternion.slerp(target_rotation, .5);
 
         }
 
