@@ -143,20 +143,27 @@ const modify_camera = () => {
         main_camera_controls.forward(-camera_velocity, false);
     }
 
-    // Update camera position
-    const delta = clock.getDelta();
-    main_camera_controls.update(delta);
-
 }
 
 // Rendering loop
 const animate = () => {
 
+    const delta = clock.getDelta();
+
     // Check for camera changes, update it
     modify_camera();
 
+    // Update camera position
+    main_camera_controls.update(delta);
+
     try {
+
+        // Update blend shapes
         vrmModel.blendShapeProxy.update()
+
+        // Update spring bones
+        vrmModel.springBoneManager.lateUpdate(delta);
+
     } catch (e) { }
 
     // Render scene
@@ -171,7 +178,7 @@ animate();
 const size = 10;
 const divisions = 10;
 const gridHelper = new THREE.GridHelper(size, divisions);
-mainScene.add(gridHelper);
+//mainScene.add(gridHelper);
 
 // Reference to VRM character model
 let vrmModel: VRM;
@@ -283,4 +290,4 @@ const model_tracking_sock = (ws_url: string) => {
 load_model("/bruh.vrm");
 
 // Read in VRM model positioning data
-model_tracking_sock("ws://127.0.0.1:3579/api/model");
+model_tracking_sock(getWebSocket("127.0.0.1:3579/api/model"));
