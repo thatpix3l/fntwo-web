@@ -64,7 +64,20 @@ const camera_transform_sock = (ws_url: string) => {
 
 }
 
-camera_transform_sock("ws://127.0.0.1:3579/api/camera");
+// When given a socket address in the form like "127.0.0.1:80/api/path", add to the front the appropriate WebSocket prefix
+const getWebSocket = (socket_address: string): string => {
+
+    if(location.protocol === "https:") {
+        return "wss://" + socket_address
+
+    } else {
+        return "ws://" + socket_address
+
+    }
+
+}
+
+camera_transform_sock(getWebSocket("127.0.0.1:3579/api/camera"));
 
 // Get the current positioning and rotation of a given camera, send it to given WebSocket
 const send_camera_data = (camera_controls: CameraControls) => {
