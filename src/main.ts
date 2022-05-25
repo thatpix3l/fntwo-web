@@ -3,6 +3,7 @@ import {GLTFLoader} from "three-stdlib";
 import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
 import * as TYPINGS from "./typings";
+import * as UI from "./ui/App";
 
 // Document styling
 document.body.style.margin = "0";
@@ -296,3 +297,5 @@ load_model("/bruh.vrm");
 
 // Read in VRM model positioning data
 model_tracking_sock(getWebSocket("127.0.0.1:3579/api/model"));
+
+UI.start();

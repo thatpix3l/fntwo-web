@@ -1,5 +1,6 @@
 import * as esbuild from "esbuild";
 import esbuildServe from 'esbuild-serve';
+import { solidPlugin } from 'esbuild-plugin-solid';
 
 const isProduction = !(process.argv.includes('-w'));
 
@@ -11,6 +12,9 @@ const build_options = {
   logLevel: "info",
   ...(!isProduction && { sourcemap: "inline" }), // Include sourcemaps, if not in production
   minify: isProduction, // Minify in production
+  plugins: [
+    solidPlugin(),
+  ],
 
 };
 
