@@ -1,21 +1,18 @@
 {
   "name": "vanezo-frontend",
   "version": "0.1.0",
+  "type": "module",
   "devDependencies": {
-    "three": "^0.140.2",
     "@pixiv/three-vrm": "^0.6.11",
-    "@rollup/plugin-html": "^0.2.4",
-    "@rollup/plugin-node-resolve": "^13.3.0",
-    "@rollup/plugin-typescript": "^8.3.2",
     "@types/three": "^0.140.0",
     "camera-controls": "^1.34.4",
-    "rollup": "^2.72.1",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^1.1.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "esbuild": "^0.14.39",
+    "esbuild-serve": "^1.0.1",
+    "three": "^0.140.2",
+    "three-stdlib": "^2.10.1"
   },
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w"
+    "build": "node esbuild.config.js",
+    "dev": "node esbuild.config.js -w"
   }
 }

@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
-import { GLTFNode, VRM, VRMSchema } from '@pixiv/three-vrm';
+import {GLTFLoader} from "three-stdlib";
+import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
 import * as TYPINGS from "./typings";
 
@@ -46,6 +46,8 @@ const camera_transform_sock = (ws_url: string) => {
     camera_ws.onopen = (ev) => {
         console.log("Successfully connected to camera transformation socket!");
     };
+
+    console.log("lmao, imagine?");
 
     // Callback for handling received camera transformation data
     camera_ws.onmessage = process_camera_payload;
@@ -191,6 +193,7 @@ const load_model = (model_path: string) => {
     gltfLoader.load(model_path, async (gltf) => {
 
         // Create and store VRM representation from loaded GLTF
+        // @ts-ignore
         vrmModel = (await VRM.from(gltf));
 
         // Add VRM to scene       
