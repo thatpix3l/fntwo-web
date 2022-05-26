@@ -61,13 +61,7 @@ export function start(keyState: { [keyname: string]: boolean }) {
     const uiControlLoop = () => {
 
         // On press and hold of the Escape key, toggle once the UI
-        if (keyState["Escape"]) {
-            toggleUI.run();
-
-        } else {
-            toggleUI.allowRun = true;
-
-        }
+        keyState["Escape"] ? toggleUI.run() : toggleUI.allowRun = true;
 
         requestAnimationFrame(uiControlLoop);
 
