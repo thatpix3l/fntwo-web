@@ -13,10 +13,10 @@ export function start(keyState: { [keyname: string]: boolean }) {
     // Useful for running toggles only once, on certain conditions
     class toggleHelper {
         allowRun: boolean;
-        action: () => void;
+        action: () => any;
 
         // Allow running whatever action the first time on initialization
-        constructor(action: () => void) {
+        constructor(action: () => any) {
             this.allowRun = true;
             this.action = action;
         }
@@ -76,11 +76,44 @@ export function start(keyState: { [keyname: string]: boolean }) {
     // Signal that's flipped when dragging a file into and out of the drag and drop window
     const [isDragging, setDragging] = createSignal(false);
 
-    const receiveVRMFile = (ev: DragEvent) => {
-        ev.preventDefault();
-        const vrmFile = ev.dataTransfer!.files[0];
+    // Process a passed in VRM file
+    const processFileVRM = (vrmFile: File) => {
+
+        const vrmReader = new FileReader();
+        
+        // Store reference to data
+        vrmReader.onload = (ev) => {
+            console.log(vrmReader.result as ArrayBuffer);
+        };
+
+        // Get URL to model Blob, for use in loading through GLTF from memory
         const vrmBlobURL = URL.createObjectURL(vrmFile);
+        vrmReader.readAsDataURL(vrmFile);
+        
+        //console.log(vrmBlobURL, vrmFile);
+
     }
+
+    // Reference to input element for manually uploading files
+    let vrmInputElem: HTMLInputElement;
+
+    // Extract the VRM file from dragging and dropping
+    const processDroppedVRM = (ev: DragEvent) => {
+
+        // Prevent default window action with dragging and dropping files
+        ev.preventDefault();
+        const vrmFile = ((ev.dataTransfer as DataTransfer).files as FileList)[0];
+        processFileVRM(vrmFile);
+
+    }
+
+    // Extract the VRM file from manually clicking upload window
+    const processUploadedVRM = (ev: HTMLInputElement | Event) => {
+
+        const vrmFile = (vrmInputElem.files as FileList)[0];
+        processFileVRM(vrmFile);
+
+    };
 
     // Structure of main menu
     const SidePanes = () => <section class="section is-flex is-flex-direction-row">
@@ -92,13 +125,15 @@ export function start(keyState: { [keyname: string]: boolean }) {
                 Load New Model
             </h1>
             {/* Drag and drop window for VRM file upload. Also, tappable */}
-            <div class="box drag-drop"
+            <div class="box vrm-upload-box"
                 classList={{ "dragged-into": isDragging() }}
-                ondragenter={(ev) => { ev.dataTransfer!.dropEffect = 'copy';setDragging(true) }}
-                ondragleave={(ev) => { setDragging(false) }}
-                ondrop={(ev) => { setDragging(false); receiveVRMFile(ev) }}>
+                ondragenter={() => { setDragging(true) }}
+                ondragleave={() => { setDragging(false) }}
+                ondrop={(ev) => { setDragging(false); processDroppedVRM(ev) }}
+                onclick={() => { vrmInputElem.click() }}>
 
-                <p>Drop your <code>.vrm</code> file onto me!</p>
+                <p>Drag and drop your <code>.vrm</code>, or click to manually pick!</p>
+                <input class="vrm-file-dialog" ref={vrmInputElem} onchange={processUploadedVRM} type="file" />
 
             </div>
         </div>

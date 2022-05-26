@@ -37,13 +37,18 @@
     filter: blur(2px);
 }
 
-.drag-drop {
+.vrm-upload-box {
     aspect-ratio: 1/1;
+    cursor: pointer;
 }
 
 
-.drag-drop * {
+.vrm-upload-box * {
     pointer-events: none;
+}
+
+.vrm-file-dialog {
+    display: none;
 }
 
 .dragged-into {
