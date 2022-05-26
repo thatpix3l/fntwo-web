@@ -36,3 +36,16 @@
 #model-root.inactive {
     filter: blur(2px);
 }
+
+.drag-drop {
+    aspect-ratio: 1/1;
+}
+
+
+.drag-drop * {
+    pointer-events: none;
+}
+
+.dragged-into {
+    outline: 3px dashed hsl(217, 71%, 53%);
+}
