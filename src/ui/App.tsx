@@ -35,11 +35,13 @@ export function start(keyState: { [keyname: string]: boolean }) {
 
     };
 
+    // Helper function to showt the menu UI
     const showUI = () => {
         ui_root.className = "active";
         model_root.className = "inactive";
     }
 
+    // Helper function to hide the menu UI
     const hideUI = () => {
         ui_root.className = "inactive";
         model_root.className = "active";
@@ -62,8 +64,10 @@ export function start(keyState: { [keyname: string]: boolean }) {
 
     });
 
+    // Main loop for controlling the UI
     const uiControlLoop = () => {
 
+        // On press and hold of the Escape key, toggle once the UI
         if (keyState["Escape"]) {
             toggleUI.run();
 
@@ -81,6 +85,7 @@ export function start(keyState: { [keyname: string]: boolean }) {
     // Structure of main menu
     const SidePanes = () => <section class="section is-flex is-flex-direction-row">
 
+        {/* Left pane in main menu, for dragging and dropping new VRM models */}
         <div id="left-menu-pane" class="box has-background-light" ondragover={(ev) => {console.log(ev)}} ondrop={(ev) => {console.log(ev)}}>
             <h1 class="title">
                 Load New Model
@@ -93,6 +98,7 @@ export function start(keyState: { [keyname: string]: boolean }) {
         <div>
         </div>
 
+        {/* Right pane in main menu, for configuring the details of the currently loaded VRM model */}
         <div id="right-menu-pane" class="box has-background-light">
             <h1 class="title">Edit Existing Model</h1>
         </div>
