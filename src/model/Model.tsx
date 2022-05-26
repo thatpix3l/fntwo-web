@@ -186,7 +186,6 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     const size = 10;
     const divisions = 10;
     const gridHelper = new THREE.GridHelper(size, divisions);
-    //mainScene.add(gridHelper);
 
     // Reference to VRM character model
     let vrmModel: VRM;
