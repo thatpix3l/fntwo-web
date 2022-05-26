@@ -79,16 +79,8 @@ export function start(keyState: { [keyname: string]: boolean }, modelSignal: Sig
     // Process a passed in VRM file
     const processFileVRM = (vrmFile: File) => {
 
-        const vrmReader = new FileReader();
-        
-        // Store reference to data
-        vrmReader.onload = (ev) => {
-            console.log(vrmReader.result as ArrayBuffer);
-        };
-
         // Get URL to model Blob, for use in loading through GLTF from memory
         const vrmBlobURL = URL.createObjectURL(vrmFile);
-        vrmReader.readAsDataURL(vrmFile);
         
         modelSignal[1](vrmBlobURL);
 

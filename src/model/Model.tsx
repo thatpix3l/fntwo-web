@@ -194,6 +194,11 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     // Model loader
     const load_model = (model_path: string) => {
 
+        // Prune existing model, first
+        if(vrmModel !== undefined) {
+            mainScene.remove(vrmModel.scene);
+        }
+
         // Load model using GLTF
         const gltfLoader = new GLTFLoader();
         gltfLoader.load(model_path, async (gltf) => {
@@ -281,7 +286,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     };
 
     // Load default VRM model
-    load_model("/bruh.vrm");
+    load_model("/default.vrm");
 
     // Additionally, load a new model when modelSignal for a new URL changes
     const getModelURL = modelURLSignal[0];
