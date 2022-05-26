@@ -1,5 +1,6 @@
 import * as model from "./model/Model";
 import * as ui from "./ui/App";
+import { createSignal } from "solid-js";
 
 // Global key capture, for use in both the Model viewer and UI control
 const keyState: { [keyname: string]: boolean } = {};
@@ -14,5 +15,7 @@ document.addEventListener('keyup', (ev) => {
 }, true);
 
 // Start model viewer and UI
-model.start(keyState);
-ui.start(keyState);
+const modelURLSignal = createSignal("");
+
+model.start(keyState, modelURLSignal);
+ui.start(keyState, modelURLSignal);

@@ -1,8 +1,8 @@
 import { render } from "solid-js/web";
-import { createSignal } from 'solid-js';
+import { Signal, createSignal } from 'solid-js';
 import "./App.css";
 
-export function start(keyState: { [keyname: string]: boolean }) {
+export function start(keyState: { [keyname: string]: boolean }, modelSignal: Signal<string>) {
 
     const ui_root = document.getElementById("ui-root")!; // Reference to element for UI components
     const model_root = document.getElementById('model-root')!; // Reference to element for model viewer
@@ -90,7 +90,7 @@ export function start(keyState: { [keyname: string]: boolean }) {
         const vrmBlobURL = URL.createObjectURL(vrmFile);
         vrmReader.readAsDataURL(vrmFile);
         
-        //console.log(vrmBlobURL, vrmFile);
+        modelSignal[1](vrmBlobURL);
 
     }
 
