@@ -84,7 +84,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     }
 
     // When given a socket address in the form like "127.0.0.1:80/api/path", add to the front the appropriate WebSocket prefix
-    const getWebSocket = (socket_address: string): string => {
+    const addWSProtocol = (socket_address: string): string => {
 
         if (location.protocol === "https:") {
             return "wss://" + socket_address
@@ -96,7 +96,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
 
     }
 
-    camera_transform_sock(getWebSocket(window.location.host + "/api/camera"));
+    camera_transform_sock(addWSProtocol(window.location.hostname + ":3579/api/camera"));
 
     // Get the current positioning and rotation of a given camera, send it to given WebSocket
     const send_camera_data = (camera_controls: CameraControls) => {
@@ -294,5 +294,5 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     });
 
     // Read in VRM model positioning data
-    model_tracking_sock(getWebSocket("127.0.0.1:3579/api/model"));
+    model_tracking_sock(addWSProtocol("127.0.0.1:3579/api/model"));
 }
