@@ -5,6 +5,10 @@
     --ui-hide-duration: var(--ui-show-duration);
 }
 
+html, body {
+    background: none;
+}
+
 #ui-root {
     width: 100%;
     height: 100%;
