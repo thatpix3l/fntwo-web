@@ -1,18 +1,38 @@
-head,
-body {
-    margin: none;
-    padding: none;
-    box-sizing: border-box;
-    height: 100%;
+@import 'bulma/css/bulma.css';
+
+:root {
+    --ui-show-duration: 250ms;
+    --ui-hide-duration: var(--ui-show-duration);
 }
 
-#ui_root {
-    position: fixed;
+#ui-root {
     width: 100%;
     height: 100%;
+    position: fixed;
     pointer-events: none;
+    z-index: 2;
 }
 
-#ui_root * {
+#ui-root > section > * {
+    width: 100%;
+    height: 100%;
     pointer-events: auto;
+}
+
+#ui-root.inactive {
+    display: none;
+}
+
+#model-root {
+    z-index: 1;
+    transition: var(--ui-hide-duration) filter linear;
+}
+
+#model-root * {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#model-root.inactive {
+    filter: blur(2px);
 }
