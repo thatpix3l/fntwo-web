@@ -1,5 +1,6 @@
 import { render } from "solid-js/web";
 import { Signal, createSignal } from 'solid-js';
+import {toggleHelper} from "../typings";
 import "./App.css";
 
 export function start(keyState: { [keyname: string]: boolean }, modelSignal: Signal<string>) {
@@ -9,32 +10,7 @@ export function start(keyState: { [keyname: string]: boolean }, modelSignal: Sig
 
     const [uiVisible, setUIVisibility] = createSignal(false); // Signal for flipping the UI on and off
 
-    // Generic wrapper class to run any function only when allowed to
-    // Useful for running toggles only once, on certain conditions
-    class toggleHelper {
-        allowRun: boolean;
-        action: () => any;
-
-        // Allow running whatever action the first time on initialization
-        constructor(action: () => any) {
-            this.allowRun = true;
-            this.action = action;
-        }
-
-        // After first run, disable next call to run
-        // It's up to the developer for deciding on when to allow the next run
-        run() {
-
-            if (this.allowRun) {
-                this.action();
-                this.allowRun = false;
-            }
-
-        }
-
-    };
-
-    // Helper function to showt the menu UI
+    // Helper function to show the menu UI
     const showUI = () => {
         ui_root.className = "active";
         model_root.className = "inactive";
