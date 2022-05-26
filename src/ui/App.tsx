@@ -1,7 +1,6 @@
 import { render } from "solid-js/web";
 import { createSignal } from 'solid-js';
-import * as solidDND from '@thisbeyond/solid-dnd';
-import "./UI.css";
+import "./App.css";
 
 export function start(keyState: { [keyname: string]: boolean }) {
 
