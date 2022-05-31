@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {GLTFLoader} from "three-stdlib";
 import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
-import * as TYPINGS from "../typings";
+import { cameraPayload, vrmPayload, payloadSingleBone }from "../types";
 import { Signal, createEffect } from "solid-js";
 
 export const start = async (keyState: { [keyName: string]: boolean }, modelURLSignal: Signal<string>) => {
@@ -35,7 +35,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     const camera_velocity: number = 0.1;
 
     // Camera transformation vars to help when user decides to manually change camera positioning
-    let live_camera_data: TYPINGS.cameraPayload;
+    let live_camera_data: cameraPayload;
     let camera_ws: WebSocket;
 
     const process_camera_payload = (ev: MessageEvent<any>) => {
@@ -108,7 +108,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
         camera_vect = camera_controls.getPosition(camera_vect);
 
         // Var for storing current camera position and rotation
-        let new_camera_data: TYPINGS.cameraPayload = {
+        let new_camera_data: cameraPayload = {
             position: {
                 x: camera_vect.x,
                 y: camera_vect.y,
@@ -219,7 +219,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     const process_vrm_payload = (ev: MessageEvent<any>) => {
 
         // Assume given data is of type vrmPayload
-        const new_vrm: TYPINGS.vrmPayload = JSON.parse(ev.data);
+        const new_vrm: vrmPayload = JSON.parse(ev.data);
 
         try {
 
@@ -237,7 +237,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
                 const model_bone = vrmModel.humanoid?.getBoneNode(schema_bone);
 
                 // Store reference to the equivalent key with new transformations
-                const new_bone: TYPINGS.payloadSingleBone = new_vrm.bones[key];
+                const new_bone: payloadSingleBone = new_vrm.bones[key];
 
                 // Create new quaternion to rotate towards, based off of new_bone transformations
                 const target_rotation = new THREE.Quaternion(
