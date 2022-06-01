@@ -2,7 +2,7 @@ import * as THREE from "three";
 import {GLTFLoader} from "three-stdlib";
 import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
-import { cameraPayload, vrmPayload, payloadSingleBone }from "../types";
+import { camera, vrm, bone }from "../types";
 import { Signal, createEffect } from "solid-js";
 
 export const start = async (keyState: { [keyName: string]: boolean }, modelURLSignal: Signal<string>) => {
@@ -35,7 +35,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     const camera_velocity: number = 0.1;
 
     // Camera transformation vars to help when user decides to manually change camera positioning
-    let live_camera_data: cameraPayload;
+    let live_camera_data: camera;
     let camera_ws: WebSocket;
 
     const process_camera_payload = (ev: MessageEvent<any>) => {
@@ -44,12 +44,12 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
         live_camera_data = JSON.parse(ev.data);
 
         main_camera_controls.setLookAt(
-            live_camera_data.position.x,
-            live_camera_data.position.y,
-            live_camera_data.position.z,
-            live_camera_data.target.x,
-            live_camera_data.target.y,
-            live_camera_data.target.z,
+            live_camera_data.gaze_from.x,
+            live_camera_data.gaze_from.y,
+            live_camera_data.gaze_from.z,
+            live_camera_data.gaze_towards.x,
+            live_camera_data.gaze_towards.y,
+            live_camera_data.gaze_towards.z,
             true,
         );
 
@@ -108,13 +108,13 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
         camera_vect = camera_controls.getPosition(camera_vect);
 
         // Var for storing current camera position and rotation
-        let new_camera_data: cameraPayload = {
-            position: {
+        let new_camera_data: camera = {
+            gaze_from: {
                 x: camera_vect.x,
                 y: camera_vect.y,
                 z: camera_vect.z
             },
-            target: {
+            gaze_towards: {
                 x: target_vect.x,
                 y: target_vect.y,
                 z: target_vect.z
@@ -219,7 +219,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     const process_vrm_payload = (ev: MessageEvent<any>) => {
 
         // Assume given data is of type vrmPayload
-        const new_vrm: vrmPayload = JSON.parse(ev.data);
+        const new_vrm: vrm = JSON.parse(ev.data);
 
         try {
 
@@ -237,14 +237,14 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
                 const model_bone = vrmModel.humanoid?.getBoneNode(schema_bone);
 
                 // Store reference to the equivalent key with new transformations
-                const new_bone: payloadSingleBone = new_vrm.bones[key];
+                const new_bone: bone = new_vrm.bones[key];
 
                 // Create new quaternion to rotate towards, based off of new_bone transformations
                 const target_rotation = new THREE.Quaternion(
-                    -new_bone.rotation.quaternion.x,
-                    new_bone.rotation.quaternion.y,
-                    new_bone.rotation.quaternion.z,
-                    new_bone.rotation.quaternion.w,
+                    -new_bone.rotation.x,
+                    new_bone.rotation.y,
+                    new_bone.rotation.z,
+                    new_bone.rotation.w,
                 );
 
                 // Rotate bone

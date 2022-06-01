@@ -1,4 +1,4 @@
-type objPosition = {
+type position = {
     x: number,
     y: number,
     z: number
@@ -11,76 +11,72 @@ type quaternionRotation = {
     w: number
 }
 
-type boneRotation = {
-    quaternion: quaternionRotation,
+type bone = {
+    position: position,
+    rotation: quaternionRotation
 }
 
-type payloadSingleBone = {
-    position: objPosition,
-    rotation: boneRotation
+type humanBodyBones = {
+    [BoneName: string]: bone,
+    Hips: bone,
+    LeftUpperLeg: bone,
+    RightUpperLeg: bone,
+    LeftLowerLeg: bone,
+    RightLowerLeg: bone,
+    LeftFoot: bone,
+    RightFoot: bone,
+    Spine: bone,
+    Chest: bone,
+    UpperChest: bone,
+    Neck: bone,
+    Head: bone,
+    LeftShoulder: bone,
+    RightShoulder: bone,
+    LeftUpperArm: bone,
+    RightUpperArm: bone,
+    LeftLowerArm: bone,
+    RightLowerArm: bone,
+    LeftHand: bone,
+    RightHand: bone,
+    LeftToes: bone,
+    RightToes: bone,
+    LeftEye: bone,
+    RightEye: bone,
+    Jaw: bone,
+    LeftThumbProximal: bone,
+    LeftThumbIntermediate: bone,
+    LeftThumbDistal: bone,
+    LeftIndexProximal: bone,
+    LeftIndexIntermediate: bone,
+    LeftIndexDistal: bone,
+    LeftMiddleProximal: bone,
+    LeftMiddleIntermediate: bone,
+    LeftMiddleDistal: bone,
+    LeftRingProximal: bone,
+    LeftRingIntermediate: bone,
+    LeftRingDistal: bone,
+    LeftLittleProximal: bone,
+    LeftLittleIntermediate: bone,
+    LeftLittleDistal: bone,
+    RightThumbProximal: bone,
+    RightThumbIntermediate: bone,
+    RightThumbDistal: bone,
+    RightIndexProximal: bone,
+    RightIndexIntermediate: bone,
+    RightIndexDistal: bone,
+    RightMiddleProximal: bone,
+    RightMiddleIntermediate: bone,
+    RightMiddleDistal: bone,
+    RightRingProximal: bone,
+    RightRingIntermediate: bone,
+    RightRingDistal: bone,
+    RightLittleProximal: bone,
+    RightLittleIntermediate: bone,
+    RightLittleDistal: bone,
+    LastBone: bone
 }
 
-type payloadBones = {
-    [BoneName: string]: payloadSingleBone,
-    Hips: payloadSingleBone,
-    LeftUpperLeg: payloadSingleBone,
-    RightUpperLeg: payloadSingleBone,
-    LeftLowerLeg: payloadSingleBone,
-    RightLowerLeg: payloadSingleBone,
-    LeftFoot: payloadSingleBone,
-    RightFoot: payloadSingleBone,
-    Spine: payloadSingleBone,
-    Chest: payloadSingleBone,
-    UpperChest: payloadSingleBone,
-    Neck: payloadSingleBone,
-    Head: payloadSingleBone,
-    LeftShoulder: payloadSingleBone,
-    RightShoulder: payloadSingleBone,
-    LeftUpperArm: payloadSingleBone,
-    RightUpperArm: payloadSingleBone,
-    LeftLowerArm: payloadSingleBone,
-    RightLowerArm: payloadSingleBone,
-    LeftHand: payloadSingleBone,
-    RightHand: payloadSingleBone,
-    LeftToes: payloadSingleBone,
-    RightToes: payloadSingleBone,
-    LeftEye: payloadSingleBone,
-    RightEye: payloadSingleBone,
-    Jaw: payloadSingleBone,
-    LeftThumbProximal: payloadSingleBone,
-    LeftThumbIntermediate: payloadSingleBone,
-    LeftThumbDistal: payloadSingleBone,
-    LeftIndexProximal: payloadSingleBone,
-    LeftIndexIntermediate: payloadSingleBone,
-    LeftIndexDistal: payloadSingleBone,
-    LeftMiddleProximal: payloadSingleBone,
-    LeftMiddleIntermediate: payloadSingleBone,
-    LeftMiddleDistal: payloadSingleBone,
-    LeftRingProximal: payloadSingleBone,
-    LeftRingIntermediate: payloadSingleBone,
-    LeftRingDistal: payloadSingleBone,
-    LeftLittleProximal: payloadSingleBone,
-    LeftLittleIntermediate: payloadSingleBone,
-    LeftLittleDistal: payloadSingleBone,
-    RightThumbProximal: payloadSingleBone,
-    RightThumbIntermediate: payloadSingleBone,
-    RightThumbDistal: payloadSingleBone,
-    RightIndexProximal: payloadSingleBone,
-    RightIndexIntermediate: payloadSingleBone,
-    RightIndexDistal: payloadSingleBone,
-    RightMiddleProximal: payloadSingleBone,
-    RightMiddleIntermediate: payloadSingleBone,
-    RightMiddleDistal: payloadSingleBone,
-    RightRingProximal: payloadSingleBone,
-    RightRingIntermediate: payloadSingleBone,
-    RightRingDistal: payloadSingleBone,
-    RightLittleProximal: payloadSingleBone,
-    RightLittleIntermediate: payloadSingleBone,
-    RightLittleDistal: payloadSingleBone,
-    LastBone: payloadSingleBone
-}
-
-type payloadBlendShapes = {
+type faceBlendShapes = {
     [BlendShapeName: string]: number,
     EyeBlinkLeft: number,
     EyeLookDownLeft: number,
@@ -136,19 +132,19 @@ type payloadBlendShapes = {
     TongueOut: number
 }
 
-type vrmBlendShapes = {
+type blendShapes = {
     dynamic: any
-    face: payloadBlendShapes
+    face: faceBlendShapes
 }
 
-export type vrmPayload = {
-    bones: payloadBones,
-    blend_shapes: vrmBlendShapes
+export type vrm = {
+    bones: humanBodyBones,
+    blend_shapes: blendShapes
 }
 
-export type cameraPayload = {
-    position: objPosition,
-    target: objPosition
+export type camera = {
+    gaze_from: position,
+    gaze_towards: position
 }
 
 // Scratch that, TypeScript's pretty cool :D
