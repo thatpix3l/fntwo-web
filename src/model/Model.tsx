@@ -96,7 +96,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
 
     }
 
-    camera_transform_sock(addWSProtocol(window.location.hostname + ":3579/api/camera"));
+    camera_transform_sock(addWSProtocol(window.location.hostname + ":3579/client/camera"));
 
     // Get the current positioning and rotation of a given camera, send it to given WebSocket
     const send_camera_data = (camera_controls: CameraControls) => {
@@ -294,5 +294,5 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     });
 
     // Read in VRM model positioning data
-    model_tracking_sock(addWSProtocol("127.0.0.1:3579/api/model"));
+    model_tracking_sock(addWSProtocol("127.0.0.1:3579/client/model"));
 }
