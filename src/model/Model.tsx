@@ -3,8 +3,9 @@ import {GLTFLoader} from "three-stdlib";
 import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
 import { camera, vrm, bone }from "../types";
+import { addressPrefix } from "../typings";
 
-export const start = async (keyState: { [keyName: string]: boolean }) => {
+export const start = async (keyState: { [keyName: string]: boolean }, backendAddr: addressPrefix) => {
 
     // Root element to mount canvas for model
     const model_elem_root = document.getElementById("model-root")!;
@@ -82,20 +83,7 @@ export const start = async (keyState: { [keyName: string]: boolean }) => {
 
     }
 
-    // When given a socket address in the form like "127.0.0.1:80/api/path", add to the front the appropriate WebSocket prefix
-    const addWSProtocol = (socket_address: string): string => {
-
-        if (location.protocol === "https:") {
-            return "wss://" + socket_address
-
-        } else {
-            return "ws://" + socket_address
-
-        }
-
-    }
-
-    camera_transform_sock(addWSProtocol(window.location.hostname + ":3579/client/camera"));
+    camera_transform_sock(backendAddr.urlWS() + "/client/camera");
 
     // Get the current positioning and rotation of a given camera, send it to given WebSocket
     const send_camera_data = (camera_controls: CameraControls) => {
@@ -286,8 +274,8 @@ export const start = async (keyState: { [keyName: string]: boolean }) => {
     };
 
     // Load default VRM model
-    load_model("http://127.0.0.1:3579/api/model");
+    load_model(backendAddr.url() + "/api/model");
 
     // Read in VRM model positioning data
-    model_tracking_sock(addWSProtocol("127.0.0.1:3579/client/model"));
+    model_tracking_sock(backendAddr.urlWS() + "/client/model");
 }

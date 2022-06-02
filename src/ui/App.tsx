@@ -1,9 +1,9 @@
 import { render } from "solid-js/web";
 import { createSignal } from 'solid-js';
-import {toggleHelper} from "../typings";
+import { addressPrefix, toggleHelper } from "../typings";
 import "./App.css";
 
-export function start(keyState: { [keyname: string]: boolean }) {
+export function start(keyState: { [keyname: string]: boolean }, backendAddr: addressPrefix) {
 
     const ui_root = document.getElementById("ui-root")!; // Reference to element for UI components
     const model_root = document.getElementById('model-root')!; // Reference to element for model viewer
@@ -58,7 +58,7 @@ export function start(keyState: { [keyname: string]: boolean }) {
         console.log("Processing and sending new VRM");
 
         // PUT received VRM model file to backend server
-        fetch('http://127.0.0.1:3579/api/model', {
+        fetch(backendAddr.url() + '/api/model', {
             method: "PUT",
             body: vrmFile
         });
