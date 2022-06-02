@@ -1,7 +1,7 @@
 import { render } from "solid-js/web";
 import { createSignal } from 'solid-js';
 import { addressPrefix, toggleHelper } from "../typings";
-import "./App.css";
+import "./UI.css";
 
 export function start(keyState: { [keyname: string]: boolean }, backendAddr: addressPrefix) {
 

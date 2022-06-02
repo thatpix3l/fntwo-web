@@ -1,5 +1,5 @@
 import * as model from "./model/Model";
-import * as ui from "./ui/App";
+import * as ui from "./ui/UI";
 import { addressPrefix, initialConfig } from "./typings";
 
 // Global key capture, for use in both the Model viewer and UI control
