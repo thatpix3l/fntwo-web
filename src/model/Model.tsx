@@ -285,7 +285,7 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     };
 
     // Load default VRM model
-    load_model("/default.vrm");
+    load_model("http://127.0.0.1:3579/api/model");
 
     // Additionally, load a new model when modelSignal for a new URL changes
     const getModelURL = modelURLSignal[0];
