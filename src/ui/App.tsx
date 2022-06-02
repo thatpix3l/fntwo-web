@@ -55,10 +55,13 @@ export function start(keyState: { [keyname: string]: boolean }, modelSignal: Sig
     // Process a passed in VRM file
     const processFileVRM = (vrmFile: File) => {
 
-        // Get URL to model Blob, for use in loading through GLTF from memory
-        const vrmBlobURL = URL.createObjectURL(vrmFile);
-        
-        modelSignal[1](vrmBlobURL);
+        console.log("Processing and sending new VRM");
+
+        // PUT received VRM model file to backend server
+        fetch('http://127.0.0.1:3579/api/model', {
+            method: "PUT",
+            body: vrmFile
+        });
 
     }
 
