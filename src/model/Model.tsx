@@ -58,19 +58,19 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     // WebSocket handler for reading in the current state of the camera
     const camera_transform_sock = (ws_url: string) => {
 
-        console.log("Attempting to create a new camera WebSocket...");
+        console.log("Attempting to create a new viewport camera WebSocket...");
 
         camera_ws = new WebSocket(ws_url);
 
         camera_ws.onopen = (ev) => {
-            console.log("Successfully connected to camera transformation socket!");
+            console.log("Successfully connected to viewport camera WebSocket!");
         };
 
         // Callback for handling received camera transformation data
         camera_ws.onmessage = process_camera_payload;
 
         camera_ws.onclose = function (ev) {
-            console.log('Socket is closed. Reconnect will be attempted in 1 second.', ev.reason);
+            console.log('Closed viewport camera WebSocket. Reconnect will be attempted in 1 second.', ev.reason);
             setTimeout(function () {
                 camera_transform_sock(ws_url);
             }, 1000);
@@ -261,6 +261,8 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
     // WebSocket handler for communicating with internal API for VRM transformations
     const model_tracking_sock = (ws_url: string) => {
 
+        console.log("Attempting to create a new model tracking WebSocket...");
+
         let ws = new WebSocket(ws_url);
 
         ws.onopen = (ev) => {
@@ -271,14 +273,14 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
         ws.onmessage = process_vrm_payload;
 
         ws.onclose = function (ev) {
-            console.log('Socket is closed. Reconnect will be attempted in 1 second.', ev.reason);
+            console.log('Closed model tracking WebSocket. Reconnect will be attempted in 1 second.', ev.reason);
             setTimeout(function () {
                 model_tracking_sock(ws_url);
             }, 1000);
         };
 
         ws.onerror = function (ev) {
-            console.error('Socket encountered error:', ev, 'Closing socket');
+            console.error('Encountered error with model tracking WebSocket:', ev, 'Closing socket');
             ws.close();
         };
 
