@@ -1,5 +1,5 @@
 import { render } from "solid-js/web";
-import { Signal, createSignal } from 'solid-js';
+import { createSignal } from 'solid-js';
 import {toggleHelper} from "../typings";
 import "./App.css";
 
