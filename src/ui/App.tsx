@@ -3,7 +3,7 @@ import { Signal, createSignal } from 'solid-js';
 import {toggleHelper} from "../typings";
 import "./App.css";
 
-export function start(keyState: { [keyname: string]: boolean }, modelSignal: Signal<string>) {
+export function start(keyState: { [keyname: string]: boolean }) {
 
     const ui_root = document.getElementById("ui-root")!; // Reference to element for UI components
     const model_root = document.getElementById('model-root')!; // Reference to element for model viewer

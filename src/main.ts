@@ -15,7 +15,5 @@ document.addEventListener('keyup', (ev) => {
 }, true);
 
 // Start model viewer and UI
-const modelURLSignal = createSignal("");
 
-model.start(keyState, modelURLSignal);
-ui.start(keyState, modelURLSignal);
+[model, ui].forEach(elem => { elem.start(keyState) });

@@ -3,9 +3,8 @@ import {GLTFLoader} from "three-stdlib";
 import { VRM, VRMSchema } from '@pixiv/three-vrm';
 import CameraControls from 'camera-controls';
 import { camera, vrm, bone }from "../types";
-import { Signal, createEffect } from "solid-js";
 
-export const start = async (keyState: { [keyName: string]: boolean }, modelURLSignal: Signal<string>) => {
+export const start = async (keyState: { [keyName: string]: boolean }) => {
 
     // Root element to mount canvas for model
     const model_elem_root = document.getElementById("model-root")!;
@@ -288,12 +287,6 @@ export const start = async (keyState: { [keyName: string]: boolean }, modelURLSi
 
     // Load default VRM model
     load_model("http://127.0.0.1:3579/api/model");
-
-    // Additionally, load a new model when modelSignal for a new URL changes
-    const getModelURL = modelURLSignal[0];
-    createEffect(() => {
-        load_model(getModelURL());
-    });
 
     // Read in VRM model positioning data
     model_tracking_sock(addWSProtocol("127.0.0.1:3579/client/model"));
