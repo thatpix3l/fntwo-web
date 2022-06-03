@@ -86,6 +86,22 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
     };
 
+    const save_scene = async () => {
+
+        try {
+
+            // Tell backend to save its internal runtime config
+            await fetch(backendAddr.url() + "/api/runtimeConfig", {
+                method: "PUT"
+            });
+
+
+        } catch(e) {
+
+        }
+
+    }
+
     // Structure of main menu
     const SidePanes = () => <section class="section is-flex is-flex-direction-row">
 
@@ -115,7 +131,8 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
         {/* Right pane in main menu, for configuring the details of the currently loaded VRM model */}
         <div id="right-menu-pane" class="box has-background-light">
-            <h1 class="title">Edit Existing Model</h1>
+            <h1 class="title">Options</h1>
+            <button class="button is-primary" onclick={save_scene}>Save Scene</button>
         </div>
 
     </section>;
