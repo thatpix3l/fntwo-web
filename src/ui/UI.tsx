@@ -1,5 +1,5 @@
 import { render } from "solid-js/web";
-import { createSignal } from 'solid-js';
+import { createSignal, onMount } from 'solid-js';
 import { addressPrefix, toggleHelper } from "../typings";
 import "./UI.css";
 
@@ -57,7 +57,7 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
         console.log("Processing and sending new VRM");
 
-        // PUT received VRM model file to backend server
+        // PUT received VRM model file to backend
         fetch(backendAddr.url() + '/api/model', {
             method: "PUT",
             body: vrmFile
@@ -129,15 +129,64 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
     }
 
+    // Visually show a tab with the given HTML ID
+    const showTab = (tabElemID: string) => {
+
+        const tab = document.querySelector(`#${tabElemID}`) as HTMLElement;
+        const tabContents = document.querySelectorAll(`.${tabElemID}-content`)
+
+        tab.classList.add("is-active");
+        tabContents.forEach(elem => {(elem as HTMLElement).style.display = ""});
+
+    }
+
+    // Visually hide a tab with the given ID
+    const hideTab = (tabElemID: string) => {
+
+        const tab = document.querySelector(`#${tabElemID}`) as HTMLElement;
+        const tabContents = document.querySelectorAll(`.${tabElemID}-content`)
+
+        tab.classList.remove("is-active");
+        tabContents.forEach(elem => {(elem as HTMLElement).style.display = "none"});
+
+    }
+
+    // Visually hide all tabs
+    const hideAllTabs = () => {
+
+        const tabs = document.querySelectorAll('[id$="-tab"');
+        tabs.forEach(elem => { hideTab(elem.id) });
+
+    }
+
+    // Visually hide all tabs, then show only the tab with the given HTML ID
+    const showSingleTab = (tabElemID: string) => {
+        return () => {
+
+            hideAllTabs();
+            showTab(tabElemID);
+
+        }
+    };
+
+    // Helper function to auto-click an anchor element when loaded
+    const onMountClick = (elem: HTMLAnchorElement) => {
+        onMount(() => {
+            elem.click();
+        });
+    }
+
     // Structure of main menu
     const SidePanes = () => <section class="section is-flex is-flex-direction-row">
 
         {/* Left pane in main menu, for dragging and dropping new VRM models */}
         <div id="left-menu-pane" class="box has-background-light">
+
             {/* Title */}
             <h1 class="title">
                 Load New Model
             </h1>
+
             {/* Drag and drop window for VRM file upload. Also, tappable */}
             <div class="box vrm-upload-box"
                 classList={{ "dragged-into": isDragging() }}
@@ -160,15 +209,18 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
         <div id="right-menu-pane" class="box has-background-light">
             <h1 class="title">Controls</h1>
 
-            {/* Different tabs of controls for the user to change */}
+            {/* Tab bar */}
             <div class="tabs">
                 <ul>
-                    <li class="is-active"><a>Server</a></li>
-                    <li><a>Model</a></li>
+                    <li id="scene-tab" onclick={showSingleTab("scene-tab")}><a ref={onMountClick} >Scene</a></li>
+                    <li id="model-tab" onclick={showSingleTab("model-tab")}><a>Model</a></li>
                 </ul>
             </div>
 
-            <button ref={saveSceneBtn} class="button is-primary" onclick={saveScene}>Save Scene</button>
+            {/* Different sets of tab contents, all are hidden and only one are shown */}
+            <div class="scene-tab-content">
+                <button ref={saveSceneBtn} class="button is-primary" onclick={saveScene}>Save</button>
+            </div>
         </div>
 
     </section>;
