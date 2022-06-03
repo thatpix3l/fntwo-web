@@ -90,8 +90,8 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
         try {
 
-            // Tell backend to save its internal runtime config
-            await fetch(backendAddr.url() + "/api/runtimeConfig", {
+            // Tell backend to save its internal scene config
+            await fetch(backendAddr.url() + "/api/config/scene", {
                 method: "PUT"
             });
 
