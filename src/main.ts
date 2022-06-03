@@ -1,6 +1,6 @@
 import * as model from "./model/Model";
 import * as ui from "./ui/UI";
-import { addressPrefix, initialConfig } from "./typings";
+import { addressPrefix, appConfig } from "./typings";
 
 // Global key capture, for use in both the Model viewer and UI control
 const keyState: { [keyname: string]: boolean } = {};
@@ -15,19 +15,19 @@ document.addEventListener('keyup', (ev) => {
 }, true);
 
 // Default backend server prefix, if not able to read relatively from where this frontend is hosted
-let backendAddrPrefix = new addressPrefix("127.0.0.1:3579");
-let initCfg = new initialConfig();
+let backendAddrPrefix = new addressPrefix(location.hostname + ":3579");
+let appCfg = new appConfig();
 
 // Start model viewer and UI
 (async () => {
 
     try {
         // Assuming the frontend is hosted on the same server as the API, try to pull the real initial config
-        initCfg = await (await fetch("/api/initialConfig")).json();
+        appCfg = await (await fetch("/api/config/app")).json();
         backendAddrPrefix.socket = location.host;
 
     } catch(e) {
-        console.log("Couldn't pull from where this web application is hosted the initial backend config, using defaults", initCfg, backendAddrPrefix);
+        console.error("Error trying to pull app config, using defaults", appCfg, backendAddrPrefix);
 
     }
 

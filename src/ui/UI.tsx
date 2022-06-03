@@ -53,7 +53,7 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
     const [isDragging, setDragging] = createSignal(false);
 
     // Process a passed in VRM file
-    const processFileVRM = (vrmFile: File) => {
+    const processVRM = (vrmFile: File) => {
 
         console.log("Processing and sending new VRM");
 
@@ -74,7 +74,7 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
         // Prevent default window action with dragging and dropping files
         ev.preventDefault();
         const vrmFile = ((ev.dataTransfer as DataTransfer).files as FileList)[0];
-        processFileVRM(vrmFile);
+        processVRM(vrmFile);
 
     }
 
@@ -82,11 +82,14 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
     const processUploadedVRM = (ev: HTMLInputElement | Event) => {
 
         const vrmFile = (vrmInputElem.files as FileList)[0];
-        processFileVRM(vrmFile);
+        processVRM(vrmFile);
 
     };
 
-    const save_scene = async () => {
+    let saveSceneBtn: HTMLButtonElement;
+    const saveScene = async () => {
+
+        const originalText = saveSceneBtn.textContent;
 
         try {
 
@@ -95,8 +98,32 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
                 method: "PUT"
             });
 
+            // Set appearance of button to success
+            saveSceneBtn.classList.remove("is-primary");
+            saveSceneBtn.classList.add("is-success");
+            saveSceneBtn.textContent = "Success!";
+            
+            // Reset after delay
+            setTimeout(() => {
+                saveSceneBtn.classList.remove("is-success");
+                saveSceneBtn.classList.add("is-primary");
+                saveSceneBtn.textContent = originalText;
+            }, 1000);
 
         } catch(e) {
+
+            // Set appearance of button to failure
+            saveSceneBtn.classList.remove("is-primary");
+            saveSceneBtn.classList.add("is-danger");
+            saveSceneBtn.textContent = "Failure!";
+
+            // Reset after delay
+            setTimeout(() => {
+                saveSceneBtn.classList.remove("is-danger");
+                saveSceneBtn.classList.add("is-primary");
+                saveSceneBtn.textContent = originalText;
+            }, 1000);
+
 
         }
 
@@ -131,8 +158,17 @@ export function start(keyState: { [keyname: string]: boolean }, backendAddr: add
 
         {/* Right pane in main menu, for configuring the details of the currently loaded VRM model */}
         <div id="right-menu-pane" class="box has-background-light">
-            <h1 class="title">Options</h1>
-            <button class="button is-primary" onclick={save_scene}>Save Scene</button>
+            <h1 class="title">Controls</h1>
+
+            {/* Different tabs of controls for the user to change */}
+            <div class="tabs">
+                <ul>
+                    <li class="is-active"><a>Server</a></li>
+                    <li><a>Model</a></li>
+                </ul>
+            </div>
+
+            <button ref={saveSceneBtn} class="button is-primary" onclick={saveScene}>Save Scene</button>
         </div>
 
     </section>;

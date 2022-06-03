@@ -24,7 +24,7 @@ export class toggleHelper {
 };
 
 // Default config file to assume when trying to connect to a model tracking server
-export class initialConfig {
+export class appConfig {
 
     vmc_listen_ip: string
     vmc_listen_port: number
