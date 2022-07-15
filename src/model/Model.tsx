@@ -211,8 +211,8 @@ export const start = async (keyState: { [keyName: string]: boolean }, backendAdd
         try {
 
             // Attempt to update blend shapes
-            for (const key of Object.keys(new_vrm.blend_shapes.face)) {
-                vrmModel.blendShapeProxy?.setValue("BlendShape." + key, new_vrm.blend_shapes.face[key])
+            for (const key of Object.keys(new_vrm.blend_shapes)) {
+                vrmModel.blendShapeProxy?.setValue("BlendShape." + key, new_vrm.blend_shapes[key])
             }
 
             // For each name of all bones available in the VRMSchema, update with new data equivalent from backend
