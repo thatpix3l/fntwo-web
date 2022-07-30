@@ -52,22 +52,21 @@ $: {
 
 const wsBaseURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
 
-// Auto-connect to and read server camera
-const serverCamSock = new helper.ReconnectableWebSocket("server camera", wsBaseURL+"/client/camera", 1000, ev => {
+// Auto-connect to readable server camera
+const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", wsBaseURL+"/live/read/camera", 1000, ev => {
     serverCamera = JSON.parse(ev.data)
 });
 
-// Relay the model viewer's camera state to backend server
-const sendCamera = (camera: object.Camera) => {
-    serverCamSock.Send(JSON.stringify(camera))
-}
+// Auto-connect to writable server camera
+const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsBaseURL}/live/write/camera`, 1000, ev => {})
 
+// Auto-send ThreeJS' camera to server, when changed
 $: {
-    sendCamera(clientCamera)
+    cameraWriteWS.Send(JSON.stringify(clientCamera))
 }
 
 // Auto-connect to and read server VRM
-const serverVRMSock = new helper.ReconnectableWebSocket("server vrm", wsBaseURL+"/client/model", 1000, ev => {
+const serverVRMSock = new helper.ReconnectableWebSocket("server vrm", wsBaseURL+"/live/read/model", 1000, ev => {
     serverVRM = JSON.parse(ev.data)
 }); serverVRMSock
 
