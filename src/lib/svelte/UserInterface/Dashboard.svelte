@@ -1,72 +1,119 @@
 <style>
-.dragged-into {
-    outline: 3px dashed hsl(217,71%, 53%);
+
+@import "bulma/css/bulma.css";
+
+:root {
+    --ui-show-duration: 250ms;
+    --ui-hide-duration: var(--ui-show-duration);
 }
+
+#ui {
+    align-items: flex-start;
+}
+
+.vrm-upload-box {
+    aspect-ratio: 1/1;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vrm-file-dialog {
+    display: none;
+}
+
+.dragged-into {
+    outline: 3px dashed hsl(217, 71%, 53%);
+}
+
+.section > *{
+    flex: 1 1 0px;
+}
+
+.active-tab {
+    color: blue;
+    background-color: red;
+}
+
 </style>
 
 <script lang="ts">
 
+export let vrmFile: File | undefined
+
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
 
-const processVRM = (vrmFile: File) => {
+const processVRM = (file: File) => {
 
-    fetch(`${location.origin}/api/model`, {
-        method: "PUT",
-        body: vrmFile
-    })
+    vrmFile = file
 
 }
 
 const processDroppedVRM = (ev: DragEvent) => {
-    const vrmFile = ev.dataTransfer?.files[0]
-    vrmFile && processVRM(vrmFile)
+    const file = ev.dataTransfer?.files[0]
+    file && processVRM(file)
 }
 
 const processUploadedVRM = (ev: Event & {currentTarget: EventTarget & HTMLInputElement}) => {
-    const vrmFile = ev.currentTarget.files?.[0]
-    vrmFile && processVRM(vrmFile)
+    const file = ev.currentTarget.files?.[0]
+    file && processVRM(file)
 }
+
+// Current tab name. Default is model
+let currentTab: string = "model"
 
 </script>
 
-<section class="section is-flex is-flex-direction-row">
+<section id="ui" class="section is-flex is-flex-direction-row">
 
-    <div id="left-menu-pane" class="box has-background-light">
+    <div id="left-pane" class="box has-background-light">
 
         <h1 class="title">
-            Load New Model
+            Status
         </h1>
 
-        <div class="box vrm-upload-box"
-            class:dragged-into={{ isDraggedInto }}
-            ondragenter={() => isDraggedInto = true }
-            ondragleave={() => isDraggedInto = false }
-            ondrop={ev => { isDraggedInto = false; processDroppedVRM(ev) }}
-            onclick={() => { inputElem.click() }}>
-
-            <p>Drag and drop your <code>vrm</code> file, or click to manually pick!</p>
-            <input onchange={processUploadedVRM} class="vrm-file-dialog" bind:this={inputElem} type="file" />
-
-        </div>
     </div>
 
-    <div>
+    <div class="empty-space">
     </div>
 
-    <div id="right-menu-pane" class="box has-background-light">
+    <div id="right-pane" class="box has-background-light">
         <h1 class="title">Controls</h1>
 
         <div class="tabs">
             <ul>
-                <li id="scene-tab"><a>Scene</a></li>
-                <li id="model-tab"><a>Model</a></li>
+                <li class:is-active={currentTab === "model"}><a on:click={() => currentTab = "model"}>Model</a></li>
+                <li class:is-active={currentTab === "scene"}><a on:click={() => currentTab = "scene"}>Scene</a></li>
             </ul>
         </div>
 
-        <div class="scene-tab-content">
+        {#if currentTab === "scene"}
+
+        <div>
             <button class="button is-primary">Save</button>
         </div>
+
+        {:else if currentTab === "model"}
+
+        <div id="model-tab-content">
+
+            <div class="box vrm-upload-box"
+                class:dragged-into={ isDraggedInto }
+                on:dragenter={() => isDraggedInto = true }
+                on:dragleave={() => isDraggedInto = false }
+                on:drop={ev => { isDraggedInto = false; processDroppedVRM(ev) }}
+                on:click={() => { inputElem.click() }}>
+
+                <p>Drag and drop your <code>vrm</code> file, or click to manually pick!</p>
+                <input on:change={processUploadedVRM} class="vrm-file-dialog" bind:this={inputElem} type="file" />
+
+            </div>
+
+        </div>
+
+        {/if}
 
     </div>
 
