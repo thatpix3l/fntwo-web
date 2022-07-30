@@ -59,4 +59,7 @@ onMount(() => {
     bind:outputCamera={clientCamera}
     bind:animationLoop={modelViewerLoop}
     />
+
+    <Dashboard />
+
 </main>
