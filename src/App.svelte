@@ -6,10 +6,11 @@ import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
 
 import type * as object from "./lib/ts/models/object"
 import * as helper from "lib/ts/helper"
+import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte";
 
 let vrmURL: string = `${location.origin}/api/model`
-let serverVRM: object.VRM | undefined
-let serverCamera: object.Camera | undefined
+let serverVRM: object.VRM
+let serverCamera: object.Camera
 let clientCamera: object.Camera
 
 const wsBaseURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
