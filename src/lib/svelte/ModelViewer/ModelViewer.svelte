@@ -12,9 +12,9 @@ import * as helper from "lib/ts/helper"
 export let rendererWidth: number = 1920
 export let rendererHeight: number = 1080
 export let cameraVelocity = 0.1
+export let vrmTransformation: object.VRM | undefined
 export let inputCamera: object.Camera | undefined
 export let outputCamera: object.Camera
-export let vrmTransformation: object.VRM | undefined
 export let vrmURL: string
 
 // Root element of model viewer
