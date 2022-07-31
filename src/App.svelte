@@ -19,19 +19,19 @@ import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte";
 
 let vrmFile: File | undefined
-let vrmFileURL: string = `${location.origin}/api/model`
+let vrmFileURL: string = `${location.origin}/api/read/model/get`
 let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
 
 const syncVRMFile = async (file: File) => {
 
-    await fetch("/api/model", {
+    await fetch("/api/write/model/set", {
         method: "PUT",
         body: file
     })
 
-    const syncedFile = await fetch("/api/model", {
+    const syncedFile = await fetch("/api/read/model/get", {
         method: "GET"
     }).then(resp => resp.blob())
 
