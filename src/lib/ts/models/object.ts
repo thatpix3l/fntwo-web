@@ -1,7 +1,7 @@
 export type Position = {
-    X: number
-    Y: number
-    Z: number
+    x: number
+    y: number
+    z: number
 }
 
 export type QuaternionRotation = {

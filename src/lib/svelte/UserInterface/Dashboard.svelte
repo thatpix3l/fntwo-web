@@ -31,11 +31,6 @@
     flex: 1 1 0px;
 }
 
-.active-tab {
-    color: blue;
-    background-color: red;
-}
-
 </style>
 
 <script lang="ts">
@@ -68,7 +63,7 @@ let currentTab: string = "model"
 
 <section id="ui" class="section is-flex is-flex-direction-row">
 
-    <div id="left-pane" class="box has-background-light">
+    <div class="box has-background-light">
 
         <h1 class="title">
             Status
@@ -79,7 +74,7 @@ let currentTab: string = "model"
     <div class="empty-space">
     </div>
 
-    <div id="right-pane" class="box has-background-light">
+    <div class="box has-background-light">
         <h1 class="title">Controls</h1>
 
         <div class="tabs">

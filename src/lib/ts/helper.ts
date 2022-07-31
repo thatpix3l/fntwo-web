@@ -1,22 +1,39 @@
+type keyListenerCallbacks = {
+    listenersSetup: boolean
+    keyPressed: { [keyName: string]: Boolean }
+    onPress: { [keyName: string]: () => any }
+    onRelease: { [keyName: string]: () => any }
+}
+
+let keyCallbacks: keyListenerCallbacks = {
+    listenersSetup: false,
+    keyPressed: {},
+    onPress: {},
+    onRelease: {}
+}
+
+export const StartKeyListener = () => {
+    document.addEventListener('keydown', keyEvent => {
+        keyCallbacks.keyPressed[keyEvent.key] = true
+   })
+
+   document.addEventListener('keyup', keyEvent => {
+       keyCallbacks.keyPressed[keyEvent.key] = false
+       const onRelease = keyCallbacks.onRelease[keyEvent.key]
+       onRelease && onRelease()
+   })
+}
+
 /**
  * Listen for the pressed state of a key, without waiting for key repeat delays.
  */
 export class KeyListener {
 
-    private keyPressed: { [keyName: string]: boolean } = {}
-    private onPressCallbacks: { [keyName: string]: () => any } = {}
-
-    private onReleaseCallbacks: { [keyName: string]: () => any } = {}
-
     constructor() {
-        document.addEventListener('keydown', e => {
-            this.keyPressed[e.key] = true
-        })
-
-        document.addEventListener('keyup', e => {
-            this.keyPressed[e.key] = false
-            this.onReleaseCallbacks[e.key] && this.onReleaseCallbacks[e.key]()
-        })
+        if(!keyCallbacks.listenersSetup) {
+            StartKeyListener()
+            keyCallbacks.listenersSetup = true
+        }
     }
 
     /**
@@ -25,11 +42,11 @@ export class KeyListener {
      * @param callback Callback to run when key is pressed
      */
     OnPress(keyName: string, callback: () => any) {
-        this.onPressCallbacks[keyName] = callback
+        keyCallbacks.onPress[keyName] = callback
     }
 
     OnRelease(keyName: string, callback: () => any) {
-        this.onReleaseCallbacks[keyName] = callback
+        keyCallbacks.onRelease[keyName] = callback
     }
 
     /**
@@ -38,9 +55,12 @@ export class KeyListener {
      */
     Run() {
 
-        for(const keyName in this.keyPressed) {
+        for(const keyName in keyCallbacks.keyPressed) {
 
-            this.keyPressed[keyName] && this.onPressCallbacks[keyName] && this.onPressCallbacks[keyName]()
+            const onPress = keyCallbacks.onPress[keyName]
+            if(onPress !== undefined && keyCallbacks.keyPressed[keyName]) {
+                onPress()
+            }
 
         }
 
@@ -66,7 +86,10 @@ export class ReconnectableWebSocket {
     private connectWebSocket(url: string, timeoutDelay: number) {
 
         const ws = new WebSocket(url)
-        ws.onopen = _ => this.ws = ws
+        ws.onopen = _ => {
+            this.ws = ws
+            console.log(`Connected to ${this.name} WebSocket!`)
+        }
         ws.onmessage = this.onMsgCallback
         ws.onclose = _ => {
             console.log(`${this.name} socket is closed, reconnecting in 1 second...`)
@@ -78,6 +101,28 @@ export class ReconnectableWebSocket {
 
     Send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
         this.ws?.send(data)
+    }
+
+}
+
+export class Toggle {
+
+    private callback: () => any = () => {}
+    private enabled: Boolean = true
+
+    constructor(callback: () => any) {
+        this.callback = callback
+    }
+
+    Run() {
+        if(this.enabled) {
+            this.callback()
+            this.enabled = false
+        }
+    }
+
+    Enable() {
+        this.enabled = true
     }
 
 }

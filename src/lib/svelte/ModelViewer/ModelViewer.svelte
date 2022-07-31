@@ -44,16 +44,18 @@ CameraControls.install({THREE: three}) // Prequisite for using camera-controls p
 const cameraControl = new CameraControls(sceneCamera, renderer.domElement)
 
 // Update model viewer camera everytime inputCamera gets assigned
-if(inputCamera !== undefined) {
-    cameraControl.setLookAt(
-        inputCamera.gaze_from.X,
-        inputCamera.gaze_from.Y,
-        inputCamera.gaze_from.Z,
-        inputCamera.gaze_towards.X,
-        inputCamera.gaze_towards.Y,
-        inputCamera.gaze_towards.Z,
-        true
-    )
+$: {
+    if(inputCamera !== undefined) {
+        cameraControl.setLookAt(
+            inputCamera.gaze_from.x,
+            inputCamera.gaze_from.y,
+            inputCamera.gaze_from.z,
+            inputCamera.gaze_towards.x,
+            inputCamera.gaze_towards.y,
+            inputCamera.gaze_towards.z,
+            true
+        )
+    }
 }
 
 // Lighting
@@ -70,14 +72,14 @@ const updateOutputCamera = () => {
 
     outputCamera = {
         gaze_from: {
-            X: position.x,
-            Y: position.y,
-            Z: position.z
+            x: position.x,
+            y: position.y,
+            z: position.z
         },
         gaze_towards: {
-            X: target.x,
-            Y: target.y,
-            Z: target.z
+            x: target.x,
+            y: target.y,
+            z: target.z
         }
     }
     
@@ -152,9 +154,6 @@ const transformVRM = (updatedVRM: object.VRM) => {
 const clock = new three.Clock()
 export const animationLoop = () => {
 
-    // Process all key listeners
-    keyListener.Run()
-    
     // Update camera position
     const delta = clock.getDelta()
     cameraControl.update(delta)

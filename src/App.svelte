@@ -6,10 +6,6 @@
     height: 100%;
 }
 
-.inactive {
-    display: none;
-}
-
 </style>
 
 <script lang="ts">
@@ -40,22 +36,19 @@ const syncVRMFile = async (file: File) => {
     }).then(resp => resp.blob())
 
     vrmFileURL = URL.createObjectURL(syncedFile)
-    console.log(vrmFileURL)
 
 }
 
 $: {
-
     vrmFile && syncVRMFile(vrmFile)
-
 }
 
 const wsBaseURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
 
 // Auto-connect to readable server camera
-const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", wsBaseURL+"/live/read/camera", 1000, ev => {
+const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", `${wsBaseURL}/live/read/camera`, 1000, ev => {
     serverCamera = JSON.parse(ev.data)
-});
+}); cameraReadWS
 
 // Auto-connect to writable server camera
 const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsBaseURL}/live/write/camera`, 1000, ev => {})
@@ -66,14 +59,23 @@ $: {
 }
 
 // Auto-connect to and read server VRM
-const serverVRMSock = new helper.ReconnectableWebSocket("server vrm", wsBaseURL+"/live/read/model", 1000, ev => {
+const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsBaseURL}/live/read/model`, 1000, ev => {
     serverVRM = JSON.parse(ev.data)
 }); serverVRMSock
+
+const keyListener = new helper.KeyListener()
+
+let showUI: Boolean = false
+const uiToggle = new helper.Toggle(() => showUI = !showUI)
+
+keyListener.OnPress("Escape", () => uiToggle.Run() )
+keyListener.OnRelease("Escape", () => { uiToggle.Enable() })
 
 let modelViewerLoop: () => any
 
 const mainLoop = () => {
 
+    keyListener.Run()
     modelViewerLoop()
     requestAnimationFrame(mainLoop)
 
@@ -87,9 +89,11 @@ onMount(() => {
 
 <main>
 
+    {#if showUI}
     <div id="dashboard">
         <Dashboard bind:vrmFile={vrmFile}/>
     </div>
+    {/if}
 
     <div id="model-viewer">
         <ModelViewer
