@@ -34,8 +34,12 @@
 </style>
 
 <script lang="ts">
+import type { AppConfig, SceneConfig } from "lib/ts/models/config";
+import Tabs from "./Tabs.svelte";
 
 export let vrmFile: File | undefined
+export let sceneConfig: SceneConfig | undefined
+export let appConfig: AppConfig | undefined
 
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
@@ -56,8 +60,11 @@ const processUploadedVRM = (ev: Event & {currentTarget: EventTarget & HTMLInputE
     file && processVRM(file)
 }
 
-// Current tab name. Default is model
-let currentTab: string = "model"
+// Current tab name for backend status. Default is app
+let statusTab: string = "App"
+
+// Current tab name for controls. Default is model.
+let controlTab: string = "Model"
 
 </script>
 
@@ -69,6 +76,16 @@ let currentTab: string = "model"
             Status
         </h1>
 
+        <Tabs tabNames={["App", "Scene"]} bind:currentTab={statusTab}/>
+
+        {#if statusTab === "App"}
+        <div id="status-tab" class="box">
+            <div><p>Web & API Listen Address:</p><p class="is-color">{appConfig?.api_listen}</p></div>
+        </div>
+        {:else if statusTab === "Scene"}
+        <div></div>
+        {/if}
+
     </div>
 
     <div class="empty-space">
@@ -77,20 +94,15 @@ let currentTab: string = "model"
     <div class="box has-background-light">
         <h1 class="title">Controls</h1>
 
-        <div class="tabs">
-            <ul>
-                <li class:is-active={currentTab === "model"}><a on:click={() => currentTab = "model"}>Model</a></li>
-                <li class:is-active={currentTab === "scene"}><a on:click={() => currentTab = "scene"}>Scene</a></li>
-            </ul>
-        </div>
+        <Tabs tabNames={["Model", "Scene"]} bind:currentTab={controlTab}></Tabs>
 
-        {#if currentTab === "scene"}
+        {#if controlTab === "Scene"}
 
         <div>
             <button class="button is-primary">Save</button>
         </div>
 
-        {:else if currentTab === "model"}
+        {:else if controlTab === "Model"}
 
         <div id="model-tab-content">
 

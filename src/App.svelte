@@ -26,12 +26,18 @@ import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
 import type * as object from "./lib/ts/models/object"
 import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte";
+import type { AppConfig, SceneConfig } from "lib/ts/models/config";
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/read/model/get`
 let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
+let appConfig: AppConfig
+let sceneConfig: SceneConfig
+
+fetch("/api/read/config/app/get").then(resp => resp.json()).then(data => appConfig = data)
+fetch("/api/read/config/scene/get").then(resp => resp.json()).then(data => appConfig = data)
 
 const syncVRMFile = async (file: File) => {
 
@@ -100,7 +106,7 @@ onMount(() => {
 
     {#if showUI}
     <div id="dashboard">
-        <Dashboard bind:vrmFile={vrmFile}/>
+        <Dashboard bind:vrmFile bind:appConfig bind:sceneConfig/>
     </div>
     {/if}
 
