@@ -35,6 +35,7 @@
 
 <script lang="ts">
 import type { AppConfig, SceneConfig } from "lib/ts/models/config";
+import FlipCard from "./FlipCard.svelte";
 import Tabs from "./Tabs.svelte";
 
 export let vrmFile: File | undefined
@@ -80,7 +81,7 @@ let controlTab: string = "Model"
 
         {#if statusTab === "App"}
         <div id="status-tab" class="box">
-            <div><p>Web & API Listen Address:</p><p class="is-color">{appConfig?.api_listen}</p></div>
+            <FlipCard front="Web & API Listen Address" back={appConfig?.api_listen || ""} />
         </div>
         {:else if statusTab === "Scene"}
         <div></div>
