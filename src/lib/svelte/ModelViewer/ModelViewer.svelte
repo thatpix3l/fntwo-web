@@ -112,12 +112,18 @@ const loadVRM = (url: string) => {
         vrmModel = await threeVRM.VRM.from(gltf)
         modelScene.add(vrmModel.scene)
 
+        URL.revokeObjectURL(url)
+
     },
     progress => console.log(progress),
     error => console.error(error)
     )
 
-}; vrmURL !== undefined && loadVRM(vrmURL)
+};
+
+$: {
+    vrmURL && loadVRM(vrmURL)
+}
 
 const transformVRM = (updatedVRM: object.VRM) => {
     
@@ -139,7 +145,7 @@ const transformVRM = (updatedVRM: object.VRM) => {
         const inputBone = updatedVRM.bones[boneName]
         const modelBone = vrmModel.humanoid?.getBoneNode(boneName)
 
-        modelBone?.quaternion.slerp({
+        modelBone && modelBone.quaternion.slerp({
             x: inputBone.rotation.quaternion.x,
             y: inputBone.rotation.quaternion.y,
             z: inputBone.rotation.quaternion.z,
@@ -148,7 +154,10 @@ const transformVRM = (updatedVRM: object.VRM) => {
 
     }
 
-}; vrmTransformation !== undefined && transformVRM(vrmTransformation)
+};
+$: {
+    vrmTransformation && transformVRM(vrmTransformation)
+}
 
 // Animation loop
 const clock = new three.Clock()
