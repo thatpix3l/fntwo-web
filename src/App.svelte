@@ -4,6 +4,15 @@
     position: fixed;
     width: 100%;
     height: 100%;
+    z-index: 1;
+}
+
+.transition-filter {
+    transition: filter .2s;
+}
+
+.blur {
+    filter: blur(4px);
 }
 
 </style>
@@ -95,7 +104,7 @@ onMount(() => {
     </div>
     {/if}
 
-    <div id="model-viewer">
+    <div id="model-viewer" class="transition-filter" class:blur={showUI}>
         <ModelViewer
             rendererWidth={window.innerWidth}
             rendererHeight={window.innerHeight}
