@@ -140,17 +140,23 @@ const transformVRM = (updatedVRM: object.VRM) => {
 
 
     // Update bones of VRM model
-    for(const boneName of Object.keys(threeVRM.VRMSchema.HumanoidBoneName) as threeVRM.VRMSchema.HumanoidBoneName[]) {
+    for(const schemaBoneName of Object.keys(threeVRM.VRMSchema.HumanoidBoneName) as threeVRM.VRMSchema.HumanoidBoneName[]) {
 
-        const inputBone = updatedVRM.bones[boneName]
-        const modelBone = vrmModel.humanoid?.getBoneNode(boneName)
+        const inputBone = updatedVRM.bones[schemaBoneName]
+        try {
 
-        modelBone && modelBone.quaternion.slerp({
-            x: inputBone.rotation.quaternion.x,
-            y: inputBone.rotation.quaternion.y,
-            z: inputBone.rotation.quaternion.z,
-            w: inputBone.rotation.quaternion.w
-        } as THREE.Quaternion, 0.3)
+            const modelBone = vrmModel.humanoid?.getBoneNode(schemaBoneName)
+
+            modelBone && modelBone.quaternion.slerp({
+                x: inputBone.rotation.quaternion.x,
+                y: inputBone.rotation.quaternion.y,
+                z: inputBone.rotation.quaternion.z,
+                w: inputBone.rotation.quaternion.w
+            } as THREE.Quaternion, 0.3)
+
+        } catch(e) {
+
+        }
 
     }
 
