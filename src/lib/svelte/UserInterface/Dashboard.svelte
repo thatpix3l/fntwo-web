@@ -2,11 +2,6 @@
 
 @import "bulma/css/bulma.css";
 
-:root {
-    --ui-show-duration: 250ms;
-    --ui-hide-duration: var(--ui-show-duration);
-}
-
 #ui {
     align-items: flex-start;
 }
@@ -34,13 +29,16 @@
 </style>
 
 <script lang="ts">
+import { ActionsList } from "lib/ts/backendInteraction";
+
 import type { AppConfig, SceneConfig } from "lib/ts/models/config";
-import FlipCard from "./FlipCard.svelte";
 import Tabs from "./Tabs.svelte";
 
 export let vrmFile: File | undefined
 export let sceneConfig: SceneConfig | undefined
 export let appConfig: AppConfig | undefined
+
+const actions = new ActionsList()
 
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
@@ -67,7 +65,19 @@ let statusTab: string = "App"
 // Current tab name for controls. Default is model.
 let controlTab: string = "Model"
 
+let configPropName: string = ""
+
+const updateSceneStatus = () => {
+    actions.SaveScene.status.success = actions.SaveScene.status.success
+}
+
+actions.SaveScene.userCallback = updateSceneStatus
+actions.SaveScene.failureCallback = updateSceneStatus
+actions.SaveScene.resetCallback = updateSceneStatus
+
 </script>
+
+
 
 <section id="ui" class="section is-flex is-flex-direction-row">
 
@@ -80,9 +90,24 @@ let controlTab: string = "Model"
         <Tabs tabNames={["App", "Scene"]} bind:currentTab={statusTab}/>
 
         {#if statusTab === "App"}
-        <div id="status-tab" class="box">
-            <FlipCard front="Web & API Listen Address" back={appConfig?.api_listen || ""} />
+
+        <div class="columns">
+
+            <div class="column">
+                <aside>
+                    <p class="menu-label">Config Properties</p>
+                    <ul class="menu-list">
+                        {#each Object.entries(appConfig !== undefined ? appConfig : {}) as [title]}
+                        <li><a class:is-active={configPropName === title} on:click={() => {configPropName = title}}>{title}</a></li>
+                        {/each}
+                    </ul>
+                </aside>
+            </div>
+
+            <code class="column">{appConfig !== undefined ? appConfig[configPropName] : ""}</code>
+
         </div>
+
         {:else if statusTab === "Scene"}
         <div></div>
         {/if}
@@ -99,8 +124,17 @@ let controlTab: string = "Model"
 
         {#if controlTab === "Scene"}
 
+        <button class="button"
+        class:is-link={actions.SaveScene.status.success === undefined}
+        class:is-primary={actions.SaveScene.status.success === true}
+        class:is-danger={actions.SaveScene.status.success === false}
+        on:click={() => actions.SaveScene.run()}>Save Scene</button>
+
         <div>
-            <button class="button is-primary">Save</button>
+            <div class="field">
+                <input type="checkbox" class="switch">
+                <label for="">Show grid</label>
+            </div>
         </div>
 
         {:else if controlTab === "Model"}

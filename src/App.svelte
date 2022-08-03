@@ -25,8 +25,9 @@ import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
 
 import type * as object from "./lib/ts/models/object"
 import * as helper from "lib/ts/helper"
-import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte";
-import type { AppConfig, SceneConfig } from "lib/ts/models/config";
+import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
+import type { AppConfig, SceneConfig } from "lib/ts/models/config"
+import { ActionsList } from "lib/ts/backendInteraction";
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/read/model/get`
@@ -36,26 +37,19 @@ let clientCamera: object.Camera
 let appConfig: AppConfig
 let sceneConfig: SceneConfig
 
+const actions = new ActionsList()
+
 fetch("/api/read/config/app/get").then(resp => resp.json()).then(data => appConfig = data)
-fetch("/api/read/config/scene/get").then(resp => resp.json()).then(data => appConfig = data)
+fetch("/api/read/config/scene/get").then(resp => resp.json()).then(data => sceneConfig = data)
 
-const syncVRMFile = async (file: File) => {
-
-    await fetch("/api/write/model/set", {
-        method: "PUT",
-        body: file
-    })
-
-    const syncedFile = await fetch("/api/read/model/get", {
-        method: "GET"
-    }).then(resp => resp.blob())
-
-    vrmFileURL = URL.createObjectURL(syncedFile)
-
+const updateVRM = async (file: File | undefined) => {
+    if(file) {
+        vrmFileURL = await actions.SyncVRM(file)
+    }
 }
 
 $: {
-    vrmFile && syncVRMFile(vrmFile)
+    updateVRM(vrmFile)
 }
 
 const wsBaseURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
@@ -106,7 +100,7 @@ onMount(() => {
 
     {#if showUI}
     <div id="dashboard">
-        <Dashboard bind:vrmFile bind:appConfig bind:sceneConfig/>
+        <Dashboard appConfig={appConfig} sceneConfig={sceneConfig} bind:vrmFile/>
     </div>
     {/if}
 
