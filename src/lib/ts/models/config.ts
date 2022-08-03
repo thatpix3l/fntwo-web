@@ -34,3 +34,7 @@ export class SceneConfig {
     grid: boolean = false
 
 }
+
+export class ClientConfig {
+    show_grid: boolean = false
+}

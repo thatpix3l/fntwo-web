@@ -8,6 +8,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import type * as object from "lib/ts/models/object"
 import * as helper from "lib/ts/helper"
+import type { ClientConfig } from "lib/ts/models/config";
 
 export let rendererWidth: number = 1920
 export let rendererHeight: number = 1080
@@ -15,7 +16,8 @@ export let cameraVelocity = 0.1
 export let vrmTransformation: object.VRM | undefined
 export let inputCamera: object.Camera | undefined
 export let outputCamera: object.Camera
-export let vrmURL: string
+export let vrmFileURL: string
+export let clientConfig: ClientConfig
 
 // Root element of model viewer
 let viewerRoot: HTMLElement
@@ -34,6 +36,10 @@ const modelScene = new three.Scene()
 // 3D grid
 const gridHelper = new three.GridHelper(10, 10)
 modelScene.add(gridHelper)
+
+$: {
+    gridHelper.visible = clientConfig.show_grid
+}
 
 // ThreeJS camera
 const sceneCamera = new three.PerspectiveCamera(70, rendererWidth/rendererHeight, 0.1, 1000)
@@ -122,7 +128,7 @@ const loadVRM = (url: string) => {
 };
 
 $: {
-    vrmURL && loadVRM(vrmURL)
+    vrmFileURL && loadVRM(vrmFileURL)
 }
 
 const transformVRM = (updatedVRM: object.VRM) => {

@@ -26,7 +26,7 @@ import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
 import type * as object from "./lib/ts/models/object"
 import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
-import type { AppConfig, SceneConfig } from "lib/ts/models/config"
+import { SceneConfig, ClientConfig, type AppConfig } from "lib/ts/models/config"
 import { ActionsList } from "lib/ts/backendInteraction";
 
 let vrmFile: File | undefined
@@ -36,6 +36,7 @@ let serverCamera: object.Camera
 let clientCamera: object.Camera
 let appConfig: AppConfig
 let sceneConfig = new SceneConfig()
+let clientConfig = new ClientConfig()
 
 const actions = new ActionsList()
 
@@ -100,7 +101,7 @@ onMount(() => {
 
     {#if showUI}
     <div id="dashboard">
-        <Dashboard appConfig={appConfig} sceneConfig={sceneConfig} bind:vrmFile/>
+        <Dashboard appConfig={appConfig} sceneConfig={sceneConfig} bind:clientConfig bind:vrmFile/>
     </div>
     {/if}
 
@@ -110,7 +111,8 @@ onMount(() => {
             rendererHeight={window.innerHeight}
             vrmTransformation={serverVRM}
             inputCamera={serverCamera}
-            vrmURL={vrmFileURL}
+            vrmFileURL={vrmFileURL}
+            clientConfig={clientConfig}
             bind:outputCamera={clientCamera}
             bind:animationLoop={modelViewerLoop}
         />

@@ -31,12 +31,14 @@
 <script lang="ts">
 import { ActionsList } from "lib/ts/backendInteraction";
 
-import type { AppConfig, SceneConfig } from "lib/ts/models/config";
+import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
+import Switch from "./Switch.svelte";
 import Tabs from "./Tabs.svelte";
 
 export let vrmFile: File | undefined
-export let sceneConfig: SceneConfig | undefined
+export let sceneConfig: SceneConfig
 export let appConfig: AppConfig | undefined
+export let clientConfig: ClientConfig
 
 const actions = new ActionsList()
 
@@ -131,10 +133,7 @@ actions.SaveScene.resetCallback = updateSceneStatus
         on:click={() => actions.SaveScene.run()}>Save Scene</button>
 
         <div>
-            <div class="field">
-                <input type="checkbox" class="switch">
-                <label for="">Show grid</label>
-            </div>
+            <Switch label="Show Grid" bind:checked={clientConfig.show_grid} />
         </div>
 
         {:else if controlTab === "Model"}
