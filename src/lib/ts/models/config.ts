@@ -17,6 +17,20 @@ export type AppConfig = {
     vrm_file: string
 }
 
-export type SceneConfig = {
-    camera: Camera
+export class SceneConfig {
+
+    camera: Camera = {
+        gaze_from: {
+            x: 3,
+            y: 3,
+            z: 3
+        },
+        gaze_towards: {
+            x: 0,
+            y: 0,
+            z: 0
+        }
+    }
+    grid: boolean = false
+
 }

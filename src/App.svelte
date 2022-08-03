@@ -35,7 +35,7 @@ let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
 let appConfig: AppConfig
-let sceneConfig: SceneConfig
+let sceneConfig = new SceneConfig()
 
 const actions = new ActionsList()
 
