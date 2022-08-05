@@ -19,6 +19,9 @@ export let outputCamera: object.Camera
 export let vrmFileURL: string
 export let clientConfig: ClientConfig
 
+// Key listener
+const keyListener = new helper.KeyListener()
+
 // Root element of model viewer
 let viewerRoot: HTMLElement
 
@@ -92,7 +95,6 @@ const updateOutputCamera = () => {
 }
 
 // Set controls for moving camera
-const keyListener = new helper.KeyListener()
 keyListener.OnPress("w", () => { cameraControl.forward(cameraVelocity, false) })
 keyListener.OnPress("a", () => { cameraControl.truck(-cameraVelocity, 0, false) })
 keyListener.OnPress("s", () => { cameraControl.forward(-cameraVelocity, false) })
