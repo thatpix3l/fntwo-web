@@ -37,4 +37,5 @@ export class SceneConfig {
 
 export class ClientConfig {
     show_grid: boolean = false
+    track_face: boolean = false
 }

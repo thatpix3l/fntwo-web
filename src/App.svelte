@@ -28,6 +28,8 @@ import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
 import { SceneConfig, ClientConfig, type AppConfig } from "lib/ts/models/config"
 import { ActionsList } from "lib/ts/api";
+import Mediapipe from "lib/svelte/Mediapipe/Mediapipe.svelte";
+import type { NormalizedLandmarkList } from "@mediapipe/face_mesh";
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/read/model/get`
@@ -37,6 +39,8 @@ let clientCamera: object.Camera
 let appConfig: AppConfig
 let sceneConfig = new SceneConfig()
 let clientConfig = new ClientConfig()
+
+let faceLandmarks: NormalizedLandmarkList
 
 const actions = new ActionsList()
 
@@ -68,6 +72,12 @@ $: {
     cameraWriteWS.Send(JSON.stringify(clientCamera))
 }
 
+// Auto-connect and write to Mediapipe landmarks receiver socket
+const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsBaseURL}/live/write/mediapipe`, 1000, ev => {})
+$: {
+    mediapipeWS.Send(JSON.stringify(faceLandmarks))
+}
+
 // Auto-connect to and read server VRM
 const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsBaseURL}/live/read/model`, 1000, ev => {
     serverVRM = JSON.parse(ev.data)
@@ -80,9 +90,15 @@ const gridToggle = new helper.Toggle(() => clientConfig.show_grid = !clientConfi
 keyListener.OnPress("g", () => gridToggle.Run())
 keyListener.OnRelease("g", () => gridToggle.Enable())
 
-let showUI: Boolean = false
-const uiToggle = new helper.Toggle(() => showUI = !showUI)
+// Toggle for face tracking
+const faceTrackToggle = new helper.Toggle(() => clientConfig.track_face = !clientConfig.track_face)
+keyListener.OnPress("t", () => faceTrackToggle.Run())
+keyListener.OnRelease("t", () => faceTrackToggle.Enable())
 
+// Toggle for the Dashboard
+let showUI: Boolean = false
+
+const uiToggle = new helper.Toggle(() => showUI = !showUI)
 keyListener.OnPress("Escape", () => uiToggle.Run() )
 keyListener.OnRelease("Escape", () => { uiToggle.Enable() })
 
@@ -122,5 +138,7 @@ onMount(() => {
             bind:animationLoop={modelViewerLoop}
         />
     </div>
+
+    <Mediapipe bind:faceLandmarks bind:clientConfig/>
 
 </main>
