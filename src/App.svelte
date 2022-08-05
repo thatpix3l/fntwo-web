@@ -72,7 +72,7 @@ $: {
 }
 
 // Auto-connect and write to Mediapipe landmarks receiver socket
-const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332/live/write/mediapipe`, 1000, ev => {})
+const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332`, 1000, ev => {})
 $: {
     mediapipeWS.Send(JSON.stringify(faceLandmarks))
 }
