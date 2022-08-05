@@ -57,27 +57,28 @@ $: {
     updateVRM(vrmFile)
 }
 
-const wsBaseURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
+const wsHostURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
+const wsHostnameURL = window.location.protocol === "https:" ? "ws://"+window.location.hostname : "ws://"+window.location.hostname
 
 // Auto-connect to readable server camera
-const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", `${wsBaseURL}/live/read/camera`, 1000, ev => {
+const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", `${wsHostURL}/live/read/camera`, 1000, ev => {
     serverCamera = JSON.parse(ev.data)
 }); cameraReadWS
 
 // Auto-connect and write to server camera socket
-const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsBaseURL}/live/write/camera`, 1000, ev => {})
+const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsHostURL}/live/write/camera`, 1000, ev => {})
 $: {
     cameraWriteWS.Send(JSON.stringify(clientCamera))
 }
 
 // Auto-connect and write to Mediapipe landmarks receiver socket
-const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsBaseURL}/live/write/mediapipe`, 1000, ev => {})
+const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332/live/write/mediapipe`, 1000, ev => {})
 $: {
     mediapipeWS.Send(JSON.stringify(faceLandmarks))
 }
 
 // Auto-connect to and read server VRM
-const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsBaseURL}/live/read/model`, 1000, ev => {
+const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsHostURL}/live/read/model`, 1000, ev => {
     serverVRM = JSON.parse(ev.data)
 }); serverVRMSock
 
