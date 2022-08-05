@@ -64,10 +64,8 @@ const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera",
     serverCamera = JSON.parse(ev.data)
 }); cameraReadWS
 
-// Auto-connect to writable server camera
+// Auto-connect and write to server camera socket
 const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsBaseURL}/live/write/camera`, 1000, ev => {})
-
-// Auto-send ThreeJS' camera to server, when changed
 $: {
     cameraWriteWS.Send(JSON.stringify(clientCamera))
 }
