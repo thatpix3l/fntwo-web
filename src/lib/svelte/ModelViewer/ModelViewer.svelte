@@ -142,18 +142,20 @@ const transformVRM = (updatedVRM: object.VRM) => {
     // Update blend shapes of VRM model
     for(const key of Object.keys(updatedVRM.blend_shapes)) {
 
-        vrmModel.blendShapeProxy?.setValue("BlendShape."+key, updatedVRM.blend_shapes[key])
+        try {
+            vrmModel.blendShapeProxy?.setValue(`BlendShape.${key}`, updatedVRM.blend_shapes[key])
+        } catch {}
 
     }
 
 
     // Update bones of VRM model
-    for(const schemaBoneName of Object.keys(threeVRM.VRMSchema.HumanoidBoneName) as threeVRM.VRMSchema.HumanoidBoneName[]) {
+    for(const schemaBoneName of Object.keys(threeVRM.VRMSchema.HumanoidBoneName)) {
 
-        const inputBone = updatedVRM.bones[schemaBoneName]
         try {
 
-            const modelBone = vrmModel.humanoid?.getBoneNode(schemaBoneName)
+            const inputBone = updatedVRM.bones[schemaBoneName]
+            const modelBone = vrmModel.humanoid?.getBoneNode(schemaBoneName as threeVRM.VRMSchema.HumanoidBoneName)
 
             modelBone && modelBone.quaternion.slerp({
                 x: inputBone.rotation.quaternion.x,
@@ -180,6 +182,14 @@ export const animationLoop = () => {
     // Update camera position
     const delta = clock.getDelta()
     cameraControl.update(delta)
+
+    try {
+        // Update blend shapes
+        vrmModel.blendShapeProxy?.update()
+
+        // Update spring bones
+        vrmModel.springBoneManager?.lateUpdate(delta)
+    } catch {}
 
     // Render scene
     renderer.render(modelScene, sceneCamera)
