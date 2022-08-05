@@ -40,7 +40,7 @@ faceMesh.setOptions({
 
 faceMesh.onResults((results: Results) => {
 
-    if(results.multiFaceLandmarks) {
+    if(results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
 
         faceLandmarks = results.multiFaceLandmarks[0]
 
