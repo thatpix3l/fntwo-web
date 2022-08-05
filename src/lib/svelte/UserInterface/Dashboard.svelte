@@ -29,7 +29,7 @@
 </style>
 
 <script lang="ts">
-import { ActionsList } from "lib/ts/backendInteraction";
+import { ActionsList } from "lib/ts/api";
 
 import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
 import Switch from "./Switch.svelte";

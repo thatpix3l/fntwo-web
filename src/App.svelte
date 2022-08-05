@@ -27,7 +27,7 @@ import type * as object from "./lib/ts/models/object"
 import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
 import { SceneConfig, ClientConfig, type AppConfig } from "lib/ts/models/config"
-import { ActionsList } from "lib/ts/backendInteraction";
+import { ActionsList } from "lib/ts/api";
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/read/model/get`
