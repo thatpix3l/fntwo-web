@@ -133,7 +133,8 @@ actions.SaveScene.resetCallback = updateSceneStatus
         on:click={() => actions.SaveScene.run()}>Save Scene</button>
 
         <div>
-            <Switch label="Show Grid" bind:checked={clientConfig.show_grid} />
+            <Switch label="Grid" bind:checked={clientConfig.show_grid} />
+            <Switch label="Track Face" bind:checked={clientConfig.track_face} />
         </div>
 
         {:else if controlTab === "Model"}

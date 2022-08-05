@@ -75,6 +75,11 @@ const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `
 
 const keyListener = new helper.KeyListener()
 
+// Toggle for grid
+const gridToggle = new helper.Toggle(() => clientConfig.show_grid = !clientConfig.show_grid)
+keyListener.OnPress("g", () => gridToggle.Run())
+keyListener.OnRelease("g", () => gridToggle.Enable())
+
 let showUI: Boolean = false
 const uiToggle = new helper.Toggle(() => showUI = !showUI)
 
