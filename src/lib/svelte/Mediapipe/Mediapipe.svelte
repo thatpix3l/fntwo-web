@@ -1,15 +1,15 @@
 <script lang="ts">
-import { FaceMesh, type InputMap, type NormalizedLandmarkList, type Results } from "@mediapipe/face_mesh"
+import * as mpFaceMesh from "@mediapipe/face_mesh"
 import { onMount } from "svelte";
 import type { ClientConfig } from "lib/ts/models/config";
-import { Camera } from "@mediapipe/camera_utils";
+import * as mpCamera from "@mediapipe/camera_utils";
 
-export let faceLandmarks: NormalizedLandmarkList
+export let faceLandmarks: mpFaceMesh.NormalizedLandmarkList
 export let clientConfig: ClientConfig
 
 let videoElem: HTMLVideoElement
 
-let camera: Camera
+let camera: mpCamera.Camera
 
 $: {
 
@@ -27,18 +27,18 @@ $: {
 
 }
 
-const faceMesh = new FaceMesh({locateFile: (file) => {
+const faceMesh = new mpFaceMesh.FaceMesh({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
 }})
 
 faceMesh.setOptions({
     maxNumFaces: 1,
-    refineLandmarks: true,
+    refineLandmarks: false,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
 })
 
-faceMesh.onResults((results: Results) => {
+faceMesh.onResults((results: mpFaceMesh.Results) => {
 
     if(results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
 
@@ -50,7 +50,7 @@ faceMesh.onResults((results: Results) => {
 
 onMount(() => {
     
-    camera = new Camera(videoElem, {
+    camera = new mpCamera.Camera(videoElem, {
         onFrame: async () => {
             await faceMesh.send({image: videoElem})
         },
