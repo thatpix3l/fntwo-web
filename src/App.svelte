@@ -32,7 +32,7 @@ import Mediapipe from "lib/svelte/Mediapipe/Mediapipe.svelte";
 import type { NormalizedLandmarkList } from "@mediapipe/face_mesh";
 
 let vrmFile: File | undefined
-let vrmFileURL: string = `${location.origin}/api/read/model/get`
+let vrmFileURL: string = `${location.origin}/api/model`
 let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
@@ -44,8 +44,8 @@ let clientConfig = new ClientConfig()
 
 const actions = new ActionsList()
 
-fetch("/api/read/config/app/get").then(resp => resp.json()).then(data => appConfig = data)
-fetch("/api/read/config/scene/get").then(resp => resp.json()).then(data => sceneConfig = data)
+fetch("/api/config/app").then(resp => resp.json()).then(data => appConfig = data)
+fetch("/api/config/scene").then(resp => resp.json()).then(data => sceneConfig = data)
 
 const updateVRM = async (file: File | undefined) => {
     if(file) {

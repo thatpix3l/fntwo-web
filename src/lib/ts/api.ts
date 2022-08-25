@@ -56,23 +56,23 @@ export class BackendAction {
 export class ActionsList {
 
     SaveScene = new BackendAction("save scene", async () => {
-        const status = await fetch("/api/write/config/scene/set", {method: "PUT"})
+        const status = await fetch("/api/config/scene/update", {method: "PUT"})
         return status.ok
     })
 
     ChangeReceiver = new BackendAction("change receiver", async () => {
-        const status = await fetch("/api/write/receiver/set", {method: "PUT"})
+        const status = await fetch("/api/receiver", {method: "PUT"})
         return status.ok
     })
 
     SyncVRM = async (file: File) => {
 
-        await fetch("/api/write/model/set", {
+        await fetch("/api/model/update", {
             method: "PUT",
             body: file
         })
 
-        const syncedFile = await fetch("/api/read/model/get", {
+        const syncedFile = await fetch("/api/model", {
             method: "GET"
         }).then(resp => resp.blob())
 
