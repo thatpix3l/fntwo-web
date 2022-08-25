@@ -32,6 +32,7 @@
 import { ActionsList } from "lib/ts/api";
 
 import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
+import ConfigViewer from "./ConfigViewer.svelte";
 import Switch from "./Switch.svelte";
 import Tabs from "./Tabs.svelte";
 
@@ -68,6 +69,11 @@ let statusTab: string = "App"
 let controlTab: string = "Model"
 
 let configPropName: string = ""
+$: {
+    if(appConfig) {
+        configPropName = appConfig[Object.keys(appConfig)[0]]
+    }
+}
 
 const updateSceneStatus = () => {
     actions.SaveScene.status.success = actions.SaveScene.status.success
@@ -92,26 +98,9 @@ actions.SaveScene.resetCallback = updateSceneStatus
         <Tabs tabNames={["App", "Scene"]} bind:currentTab={statusTab}/>
 
         {#if statusTab === "App"}
-
-        <div class="columns">
-
-            <div class="column">
-                <aside>
-                    <p class="menu-label">Config Properties</p>
-                    <ul class="menu-list">
-                        {#each Object.entries(appConfig !== undefined ? appConfig : {}) as [title]}
-                        <li><a class:is-active={configPropName === title} on:click={() => {configPropName = title}}>{title}</a></li>
-                        {/each}
-                    </ul>
-                </aside>
-            </div>
-
-            <code class="column">{appConfig !== undefined ? appConfig[configPropName] : ""}</code>
-
-        </div>
-
+        <ConfigViewer config={appConfig} />
         {:else if statusTab === "Scene"}
-        <div></div>
+        <ConfigViewer config={sceneConfig}/>
         {/if}
 
     </div>
