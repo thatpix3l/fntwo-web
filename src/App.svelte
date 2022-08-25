@@ -40,7 +40,7 @@ let appConfig: AppConfig
 let sceneConfig = new SceneConfig()
 let clientConfig = new ClientConfig()
 
-let faceLandmarks: NormalizedLandmarkList
+// let faceLandmarks: NormalizedLandmarkList
 
 const actions = new ActionsList()
 
@@ -72,10 +72,10 @@ $: {
 }
 
 // Auto-connect and write to Mediapipe landmarks receiver socket
-const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332`, 1000, ev => {})
-$: {
-    mediapipeWS.Send(JSON.stringify(faceLandmarks))
-}
+// const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332`, 1000, ev => {})
+// $: {
+//     mediapipeWS.Send(JSON.stringify(faceLandmarks))
+// }
 
 // Auto-connect to and read server VRM
 const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsHostURL}/live/read/model`, 1000, ev => {
@@ -138,6 +138,8 @@ onMount(() => {
         />
     </div>
 
+    <!--
     <Mediapipe bind:faceLandmarks bind:clientConfig/>
+    -->
 
 </main>
