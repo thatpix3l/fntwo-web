@@ -28,7 +28,7 @@ let viewerRoot: HTMLElement
 // WebGL renderer
 const renderer = new three.WebGLRenderer({alpha: true, antialias: true})
 renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setSize(rendererWidth, rendererHeight)
+$: renderer.setSize(rendererWidth, rendererHeight)
 onMount(() => {
     viewerRoot.appendChild(renderer.domElement)
 })
@@ -46,6 +46,10 @@ $: {
 
 // ThreeJS camera
 const sceneCamera = new three.PerspectiveCamera(70, rendererWidth/rendererHeight, 0.1, 1000)
+$: {
+    sceneCamera.aspect = rendererWidth / rendererHeight
+    sceneCamera.updateProjectionMatrix()
+}
 sceneCamera.position.set(0, 2, -2) // For some reason, the camera-controls library doesn't work unless I manually set the  camera position
 
 // Camera controls, for easier translation and rotation

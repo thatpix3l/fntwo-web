@@ -112,7 +112,12 @@ onMount(() => {
     mainLoop()
 })
 
+let innerWidth = 0
+let innerHeight = 0
+
 </script>
+
+<svelte:window bind:innerWidth bind:innerHeight />
 
 <main>
 
@@ -124,8 +129,8 @@ onMount(() => {
 
     <div id="model-viewer" class="transition-filter" class:blur={showUI}>
         <ModelViewer
-            rendererWidth={window.innerWidth}
-            rendererHeight={window.innerHeight}
+            rendererWidth={innerWidth}
+            rendererHeight={innerHeight}
             vrmTransformation={serverVRM}
             inputCamera={serverCamera}
             vrmFileURL={vrmFileURL}
