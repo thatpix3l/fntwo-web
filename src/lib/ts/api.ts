@@ -1,100 +1,54 @@
-export class Status {
-
-    success: boolean | undefined = undefined
-    private successTimeoutID: NodeJS.Timeout | undefined = undefined
-
-    resetSuccess(resetCallback: () => void, resetDelay: number) {
-        clearTimeout(this.successTimeoutID)
-        this.successTimeoutID = setTimeout(() => { this.success = undefined; resetCallback() } , resetDelay)
-    }
-
-}
+import type { SceneConfig } from "./models/config"
 
 export type receiverInfo = {
     active: string
     available: string[]
 }
 
-export type GenericAction = () => Promise<boolean>
-
-export class BackendAction {
-
-    readonly status = new Status()
-    readonly name: string
-    private normalCallback: GenericAction = async () => { return true }
-
-    userCallback = function() {}
-    resetCallback = function() {}
-    failureCallback = function() {}
-
-    constructor(name: string, normalCallback: GenericAction) {
-        this.name = name
-        this.normalCallback = normalCallback
-    }
-
-    async run() {
-
-        try {
-
-            const status = await this.normalCallback()
-            if(!status) {
-                throw `Unable to run backend action "${this.name}"`
-            }
-
-            this.status.success = true
-            this.userCallback()
-            this.status.resetSuccess(this.resetCallback, 750)
-
-        } catch(e) {
-
-            this.status.success = false
-            this.failureCallback()
-            this.status.resetSuccess(this.resetCallback, 750)
-            console.error(e)
-
-        }
-
-    }
-
+export class Status {
+    success: boolean | undefined = undefined
+    successTimeout: NodeJS.Timeout | undefined
+    waiting: boolean = false
 }
 
-export class ActionsList {
-
-    SaveScene = new BackendAction("save scene", async () => {
-        const status = await fetch("/api/config/scene/update", {method: "PUT"})
-        return status.ok
-    })
-
-    ChangeReceiver = new BackendAction("change receiver", async () => {
-        const status = await fetch("/api/receiver", {method: "PUT"})
-        return status.ok
-    })
-
-    SyncVRM = async (file: File) => {
-
-        await fetch("/api/model/update", {
-            method: "PUT",
-            body: file
-        })
-
-        const syncedFile = await fetch("/api/model", {
-            method: "GET"
-        }).then(resp => resp.blob())
-
-        return URL.createObjectURL(syncedFile)
-
+const throwFetch = (response: Response) => {
+    if(!response.ok) {
+        throw new Error(`Not 2xx response: ${response.status}`)
     }
+}
 
-    GetReceiver = async () => {
-        const info: receiverInfo = await fetch("/api/receiver").then(resp => resp.json())
-        return info
-    }
+export let GetScene = async () => {
+    const response = await fetch("/api/config/scene")
+    throwFetch(response)
     
-    SetReceiver = async (receiverName: string) => {
-        await fetch("/api/receiver/update", {
-            method: "PUT",
-            body: receiverName
-        })
-    }
+    return await response.json() as SceneConfig
+}
 
+export let SetScene = async () => {
+    const response = await fetch("/api/config/scene/update", {method: "PUT"})
+    throwFetch(response)
+}
+
+export let GetVRM = async () => {
+    const response = await fetch("/api/model")
+    throwFetch(response)
+
+    return await response.blob()
+}
+
+export let SetVRM = async (file: File) => {
+    const response = await fetch("/api/model/update", { method: "PUT", body: file })
+    throwFetch(response)
+}
+
+export const GetReceiver = async () => {
+    const response = await fetch("/api/receiver")
+    throwFetch(response)
+    
+    return await response.json() as receiverInfo
+}
+
+export const SetReceiver = async (receiverName: string) => {
+    const response = await fetch("/api/receiver/update", { method: "PUT", body: receiverName })
+    throwFetch(response)
 }

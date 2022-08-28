@@ -23,13 +23,11 @@ import { onMount } from "svelte";
 
 import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
 
-import type * as object from "./lib/ts/models/object"
+import type * as object from "lib/ts/models/object"
+import * as api from "lib/ts/api"
 import * as helper from "lib/ts/helper"
 import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
 import { SceneConfig, ClientConfig, type AppConfig } from "lib/ts/models/config"
-import { ActionsList } from "lib/ts/api";
-import Mediapipe from "lib/svelte/Mediapipe/Mediapipe.svelte";
-import type { NormalizedLandmarkList } from "@mediapipe/face_mesh";
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/model`
@@ -42,14 +40,13 @@ let clientConfig = new ClientConfig()
 
 // let faceLandmarks: NormalizedLandmarkList
 
-const actions = new ActionsList()
-
 fetch("/api/config/app").then(resp => resp.json()).then(data => appConfig = data)
 fetch("/api/config/scene").then(resp => resp.json()).then(data => sceneConfig = data)
 
 const updateVRM = async (file: File | undefined) => {
     if(file) {
-        vrmFileURL = await actions.SyncVRM(file)
+        await api.SetVRM(file)
+        vrmFileURL = URL.createObjectURL(await api.GetVRM())
     }
 }
 

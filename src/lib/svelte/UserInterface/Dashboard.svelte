@@ -29,7 +29,8 @@
 </style>
 
 <script lang="ts">
-import { ActionsList, type receiverInfo } from "lib/ts/api";
+import * as api from "lib/ts/api"
+import type { receiverInfo } from "lib/ts/api";
 
 import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
 import Button from "./Button.svelte";
@@ -43,15 +44,11 @@ export let sceneConfig: SceneConfig
 export let appConfig: AppConfig | undefined
 export let clientConfig: ClientConfig
 
-const actions = new ActionsList()
-
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
 
 const processVRM = (file: File) => {
-
     vrmFile = file
-
 }
 
 const processDroppedVRM = (ev: DragEvent) => {
@@ -77,29 +74,39 @@ $: {
     }
 }
 
-const updateSceneStatus = () => {
-    actions.SaveScene.status.success = actions.SaveScene.status.success
-}
-
-actions.SaveScene.userCallback = updateSceneStatus
-actions.SaveScene.failureCallback = updateSceneStatus
-actions.SaveScene.resetCallback = updateSceneStatus
-
 let receiverInfo: receiverInfo
 let selectedReceiver: string
 
 const updateReceiversList = async () => {
-    receiverInfo = await actions.GetReceiver()
+    receiverInfo = await api.GetReceiver()
 }; updateReceiversList()
 
 $: {
     (async () => {
         if(appConfig && appConfig.receiver !== selectedReceiver) {
             appConfig.receiver = selectedReceiver
-            await actions.SetReceiver(appConfig.receiver)
+            await api.SetReceiver(appConfig.receiver)
             await updateReceiversList()
         }
     })()
+}
+
+let setSceneStatus = new api.Status()
+const setScene = async () => {
+
+    clearTimeout(setSceneStatus.successTimeout)
+    setSceneStatus.waiting = true
+
+    try {
+        await api.SetScene()
+        setSceneStatus.success = true
+    } catch {
+        setSceneStatus.success = false
+    }
+    setSceneStatus.waiting = false
+    
+    setSceneStatus.successTimeout = setTimeout(() => setSceneStatus.success = undefined, 750)
+
 }
 
 </script>
@@ -134,7 +141,7 @@ $: {
 
         {#if controlsTab === "Scene"}
 
-        <Button success={actions.SaveScene.status.success} on:click={actions.SaveScene.run}/>
+        <Button success={setSceneStatus.success} disabled={setSceneStatus.waiting} on:click={setScene}/>
 
         <div>
             <Switch label="Grid" bind:checked={clientConfig.show_grid} />

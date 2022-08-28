@@ -5,6 +5,7 @@
 <script lang="ts">
     
 export let success: boolean | undefined
+export let disabled: boolean = false
 
 </script>
 
@@ -12,7 +13,7 @@ export let success: boolean | undefined
         class:is-link={success === undefined}
         class:is-primary={success === true}
         class:is-danger={success === false}
-        disabled={success !== undefined}
+        disabled={disabled}
         on:click>
         Save Scene
 </button>
