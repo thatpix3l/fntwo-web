@@ -29,10 +29,12 @@
 </style>
 
 <script lang="ts">
-import { ActionsList } from "lib/ts/api";
+import { ActionsList, type receiverInfo } from "lib/ts/api";
 
 import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
+import Button from "./Button.svelte";
 import ConfigViewer from "./ConfigViewer.svelte";
+import RadioButtons from "./RadioButtons.svelte";
 import Switch from "./Switch.svelte";
 import Tabs from "./Tabs.svelte";
 
@@ -66,7 +68,7 @@ const processUploadedVRM = (ev: Event & {currentTarget: EventTarget & HTMLInputE
 let statusTab: string = "App"
 
 // Current tab name for controls. Default is model.
-let controlTab: string = "Model"
+let controlsTab: string = "Model"
 
 let configPropName: string = ""
 $: {
@@ -82,6 +84,23 @@ const updateSceneStatus = () => {
 actions.SaveScene.userCallback = updateSceneStatus
 actions.SaveScene.failureCallback = updateSceneStatus
 actions.SaveScene.resetCallback = updateSceneStatus
+
+let receiverInfo: receiverInfo
+let selectedReceiver: string
+
+const updateReceiversList = async () => {
+    receiverInfo = await actions.GetReceiver()
+}; updateReceiversList()
+
+$: {
+    (async () => {
+        if(appConfig && appConfig.receiver !== selectedReceiver) {
+            appConfig.receiver = selectedReceiver
+            await actions.SetReceiver(appConfig.receiver)
+            await updateReceiversList()
+        }
+    })()
+}
 
 </script>
 
@@ -111,22 +130,21 @@ actions.SaveScene.resetCallback = updateSceneStatus
     <div class="box has-background-light">
         <h1 class="title">Controls</h1>
 
-        <Tabs tabNames={["Model", "Scene"]} bind:currentTab={controlTab}></Tabs>
+        <Tabs tabNames={["Model", "Scene"]} bind:currentTab={controlsTab}></Tabs>
 
-        {#if controlTab === "Scene"}
+        {#if controlsTab === "Scene"}
 
-        <button class="button"
-        class:is-link={actions.SaveScene.status.success === undefined}
-        class:is-primary={actions.SaveScene.status.success === true}
-        class:is-danger={actions.SaveScene.status.success === false}
-        on:click={() => actions.SaveScene.run()}>Save Scene</button>
+        <Button success={actions.SaveScene.status.success} on:click={actions.SaveScene.run}/>
 
         <div>
             <Switch label="Grid" bind:checked={clientConfig.show_grid} />
             <Switch label="Track Face" bind:checked={clientConfig.track_face} />
+            {#if receiverInfo.active}
+            <RadioButtons values={[...receiverInfo.available]} bind:selected={selectedReceiver} />
+            {/if}
         </div>
 
-        {:else if controlTab === "Model"}
+        {:else if controlsTab === "Model"}
 
         <div id="model-tab-content">
 

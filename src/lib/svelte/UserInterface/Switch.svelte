@@ -5,13 +5,16 @@
 </style>
 
 <script lang="ts">
+import * as helper from "lib/ts/helper"
 
 export let label: string
 export let checked: boolean
 
+const id = helper.randomID()
+
 </script>
 
 <div class="field">
-    <input id={label} type="checkbox" name={label} class="switch" bind:checked>
-    <label for={label}>{label}</label>
+    <input id={id} type="checkbox" name={id} class="switch" bind:checked>
+    <label for={id}>{label}</label>
 </div>

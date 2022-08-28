@@ -15,6 +15,7 @@ export type AppConfig = {
     scene_file: string
     config_file: string
     vrm_file: string
+    receiver: string
 }
 
 export class SceneConfig {

@@ -68,7 +68,6 @@ export class KeyListener {
 
 }
 
-
 export class ReconnectableWebSocket {
 
     private ws?: WebSocket
@@ -125,4 +124,15 @@ export class Toggle {
         this.enabled = true
     }
 
+}
+
+export const randomID = (length: number = 12) => {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+            charactersLength));
+    }
+    return result;
 }

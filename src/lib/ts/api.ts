@@ -10,6 +10,11 @@ export class Status {
 
 }
 
+export type receiverInfo = {
+    active: string
+    available: string[]
+}
+
 export type GenericAction = () => Promise<boolean>
 
 export class BackendAction {
@@ -78,6 +83,18 @@ export class ActionsList {
 
         return URL.createObjectURL(syncedFile)
 
+    }
+
+    GetReceiver = async () => {
+        const info: receiverInfo = await fetch("/api/receiver").then(resp => resp.json())
+        return info
+    }
+    
+    SetReceiver = async (receiverName: string) => {
+        await fetch("/api/receiver/update", {
+            method: "PUT",
+            body: receiverName
+        })
     }
 
 }
