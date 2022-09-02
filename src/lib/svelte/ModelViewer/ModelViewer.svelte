@@ -147,30 +147,39 @@ const transformVRM = (updatedVRM: object.VRM) => {
     for(const key of Object.keys(updatedVRM.blend_shapes)) {
 
         try {
-            vrmModel.blendShapeProxy?.setValue(`BlendShape.${key}`, updatedVRM.blend_shapes[key])
+            helper.disableWarn(() => {
+                vrmModel.blendShapeProxy?.setValue(`BlendShape.${key}`, updatedVRM.blend_shapes[key])
+            })
         } catch {}
 
     }
 
-
     // Update bones of VRM model
-    for(const schemaBoneName of Object.keys(threeVRM.VRMSchema.HumanoidBoneName)) {
+    for(const boneName of Object.keys(updatedVRM.bones)) {
+    
+        const humanoidBoneName = threeVRM.VRMSchema.HumanoidBoneName[boneName as keyof typeof threeVRM.VRMSchema.HumanoidBoneName]
 
-        try {
-
-            const inputBone = updatedVRM.bones[schemaBoneName]
-            const modelBone = vrmModel.humanoid?.getBoneNode(schemaBoneName as threeVRM.VRMSchema.HumanoidBoneName)
-
-            modelBone && modelBone.quaternion.slerp({
-                x: inputBone.rotation.quaternion.x,
-                y: inputBone.rotation.quaternion.y,
-                z: inputBone.rotation.quaternion.z,
-                w: inputBone.rotation.quaternion.w
-            } as THREE.Quaternion, 0.3)
-
-        } catch(e) {
-
-        }
+        const inputBone = updatedVRM.bones[boneName]
+        const modelBone = vrmModel.humanoid?.getBoneNode(humanoidBoneName)
+        
+        modelBone?.quaternion.set(
+            inputBone.rotation.quaternion.x,
+            inputBone.rotation.quaternion.y,
+            inputBone.rotation.quaternion.z,
+            inputBone.rotation.quaternion.w,
+        )
+        
+        // modelBone?.position.set(
+        //     inputBone.position.x,
+        //     inputBone.position.y,
+        //     inputBone.position.z,
+        // )
+        
+        // modelBone && modelBone.quaternion.slerp({
+        //     x: inputBone.rotation.quaternion.x,
+        //     y: inputBone.rotation.quaternion.y,
+        //     z: inputBone.rotation.quaternion.z,
+        // } as THREE.Quaternion, 0.3)
 
     }
 

@@ -141,3 +141,16 @@ export const randomID = (length: number = 12) => {
     }
     return result;
 }
+
+/**
+ * Temporarily disable the console.warn when running a given callback
+ * @param callback The function to immediately run
+ */
+export const disableWarn = (callback: (...params: any) => any) => {
+    
+    const originalConsoleWarn = console.warn
+    console.warn = () => {}
+    callback()
+    console.warn = originalConsoleWarn
+    
+}
