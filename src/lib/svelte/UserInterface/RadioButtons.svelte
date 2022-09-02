@@ -23,9 +23,9 @@ const options = values.map((optionValue) => {
 
 </script>
 
-<div class="field">
-    {#each options as option}
+{#each options as option}
+<div>
     <input class="is-checkradio" id={option.id} type="radio" value={option.value} bind:group={selected} disabled={disabled}>
     <label for={option.id}>{option.value}</label>
-    {/each}
 </div>
+{/each}
