@@ -99,6 +99,11 @@ export class ReconnectableWebSocket {
     }
 
     Send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
+        if(data === undefined) {
+            console.error("Received undefined data, refusing sending data to backend")
+            return
+        }
+
         this.ws?.send(data)
     }
 

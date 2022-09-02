@@ -1,9 +1,5 @@
 import type { Camera } from "lib/ts/models/object"
 
-export type Status = {
-
-}
-
 export type AppConfig = {
     [key: string]: any
     vmc_listen: string

@@ -31,7 +31,6 @@
 <script lang="ts">
 import * as api from "lib/ts/api"
 import type { receiverInfo } from "lib/ts/api";
-
 import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
 import Button from "./Button.svelte";
 import ConfigViewer from "./ConfigViewer.svelte";
@@ -40,7 +39,7 @@ import Switch from "./Switch.svelte";
 import Tabs from "./Tabs.svelte";
 
 export let vrmFile: File | undefined
-export let sceneConfig: SceneConfig
+export let sceneConfig: SceneConfig | undefined
 export let appConfig: AppConfig | undefined
 export let clientConfig: ClientConfig
 
@@ -61,35 +60,17 @@ const processUploadedVRM = (ev: Event & {currentTarget: EventTarget & HTMLInputE
     file && processVRM(file)
 }
 
-// Current tab name for backend status. Default is app
+// Current tab name for viewing the current state of the server's configs
 let statusTab: string = "App"
 
-// Current tab name for controls. Default is model.
+// Current tab name for controls
 let controlsTab: string = "Model"
 
-let configPropName: string = ""
-$: {
-    if(appConfig) {
-        configPropName = appConfig[Object.keys(appConfig)[0]]
-    }
-}
-
+// Available receivers to switch between from API server; does not change during runtime
 let receiverInfo: receiverInfo
-let selectedReceiver: string
-
-const updateReceiversList = async () => {
-    receiverInfo = await api.GetReceiver()
-}; updateReceiversList()
-
-$: {
-    (async () => {
-        if(appConfig && appConfig.receiver !== selectedReceiver) {
-            appConfig.receiver = selectedReceiver
-            await api.SetReceiver(appConfig.receiver)
-            await updateReceiversList()
-        }
-    })()
-}
+(async () => {
+    receiverInfo = await api.GetAvailableReceivers()
+})()
 
 let setSceneStatus = new api.Status()
 const setScene = async () => {
@@ -110,8 +91,6 @@ const setScene = async () => {
 }
 
 </script>
-
-
 
 <section id="ui" class="section is-flex is-flex-direction-row">
 
@@ -146,8 +125,10 @@ const setScene = async () => {
         <div>
             <Switch label="Grid" bind:checked={clientConfig.show_grid} />
             <Switch label="Track Face" bind:checked={clientConfig.track_face} />
-            {#if receiverInfo.active}
-            <RadioButtons values={[...receiverInfo.available]} bind:selected={selectedReceiver} />
+            {#if receiverInfo}
+            <div class="is-vcentered">
+                <RadioButtons values={receiverInfo.available} bind:selected={receiverInfo.active} />
+            </div>
             {/if}
         </div>
 

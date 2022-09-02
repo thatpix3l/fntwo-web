@@ -35,13 +35,8 @@ let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
 let appConfig: AppConfig
-let sceneConfig = new SceneConfig()
+let sceneConfig: SceneConfig
 let clientConfig = new ClientConfig()
-
-// let faceLandmarks: NormalizedLandmarkList
-
-fetch("/api/config/app").then(resp => resp.json()).then(data => appConfig = data)
-fetch("/api/config/scene").then(resp => resp.json()).then(data => sceneConfig = data)
 
 const updateVRM = async (file: File | undefined) => {
     if(file) {
@@ -55,29 +50,32 @@ $: {
 }
 
 const wsHostURL = location.protocol === "https:" ? "wss://"+location.host : "ws://"+location.host
-const wsHostnameURL = window.location.protocol === "https:" ? "ws://"+window.location.hostname : "ws://"+window.location.hostname
 
 // Auto-connect to readable server camera
 const cameraReadWS = new helper.ReconnectableWebSocket("readable server camera", `${wsHostURL}/live/read/camera`, 1000, ev => {
     serverCamera = JSON.parse(ev.data)
 }); cameraReadWS
 
-// Auto-connect and write to server camera socket
+// Auto-connect to writable server camera
 const cameraWriteWS = new helper.ReconnectableWebSocket("writable server camera", `${wsHostURL}/live/write/camera`, 1000, ev => {})
 $: {
-    cameraWriteWS.Send(JSON.stringify(clientCamera))
+    clientCamera !== undefined && cameraWriteWS.Send(JSON.stringify(clientCamera))
 }
 
-// Auto-connect and write to Mediapipe landmarks receiver socket
-// const mediapipeWS = new helper.ReconnectableWebSocket("writable mediapipe receiver", `${wsHostnameURL}:2332`, 1000, ev => {})
-// $: {
-//     mediapipeWS.Send(JSON.stringify(faceLandmarks))
-// }
+// Auto-connect to readable app config
+const appConfigReadWS = new helper.ReconnectableWebSocket("readable app config", `${wsHostURL}/live/read/config/app`, 1000, ev => {
+    appConfig = JSON.parse(ev.data)
+}); appConfigReadWS
+
+// Auto-connect to readable scene config
+const sceneConfigReadWS = new helper.ReconnectableWebSocket("readable scene config", `${wsHostURL}/live/read/config/scene`, 1000, ev => {
+    sceneConfig = JSON.parse(ev.data)
+}); sceneConfigReadWS
 
 // Auto-connect to and read server VRM
-const serverVRMSock = new helper.ReconnectableWebSocket("readable server VRM", `${wsHostURL}/live/read/model`, 1000, ev => {
+const vrmReadWS = new helper.ReconnectableWebSocket("readable server VRM", `${wsHostURL}/live/read/model`, 1000, ev => {
     serverVRM = JSON.parse(ev.data)
-}); serverVRMSock
+}); vrmReadWS
 
 const keyListener = new helper.KeyListener()
 

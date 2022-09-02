@@ -41,14 +41,14 @@ export let SetVRM = async (file: File) => {
     throwFetch(response)
 }
 
-export const GetReceiver = async () => {
-    const response = await fetch("/api/receiver")
+export const GetAvailableReceivers = async () => {
+    const response = await fetch("/api/receiver/available")
     throwFetch(response)
     
     return await response.json() as receiverInfo
 }
 
-export const SetReceiver = async (receiverName: string) => {
-    const response = await fetch("/api/receiver/update", { method: "PUT", body: receiverName })
+export const SetActiveReceiver = async (receiverName: string) => {
+    const response = await fetch("/api/receiver/active/update", { method: "PUT", body: receiverName })
     throwFetch(response)
 }
