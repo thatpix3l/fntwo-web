@@ -29,19 +29,19 @@
 </style>
 
 <script lang="ts">
+import Button from "lib/svelte/Components/Button.svelte"
+import ConfigViewer from "lib/svelte/Components/ConfigViewer.svelte"
+import RadioButtons from "lib/svelte/Components/RadioButtons.svelte"
+import Switch from "lib/svelte/Components/Switch.svelte"
+import Tabs from "lib/svelte/Components/Tabs.svelte"
+
 import * as api from "lib/ts/api"
-import type { receiverInfo } from "lib/ts/api";
-import type { AppConfig, ClientConfig, SceneConfig } from "lib/ts/models/config";
-import Button from "./Button.svelte";
-import ConfigViewer from "./ConfigViewer.svelte";
-import RadioButtons from "./RadioButtons.svelte";
-import Switch from "./Switch.svelte";
-import Tabs from "./Tabs.svelte";
+import type * as config from "lib/ts/models/config"
 
 export let vrmFile: File | undefined
-export let sceneConfig: SceneConfig | undefined
-export let appConfig: AppConfig | undefined
-export let clientConfig: ClientConfig
+export let sceneConfig: config.Scene | undefined
+export let appConfig: config.App | undefined
+export let clientConfig: config.Client
 
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
@@ -67,7 +67,7 @@ let statusTab: string = "App"
 let controlsTab: string = "Model"
 
 // Available receivers to switch between from API server; does not change during runtime
-let receiverInfo: receiverInfo
+let receiverInfo: api.receiver
 (async () => {
     receiverInfo = await api.GetAvailableReceivers()
 })()

@@ -1,11 +1,11 @@
 <script lang="ts">
 import * as mpFaceMesh from "@mediapipe/face_mesh"
 import { onMount } from "svelte";
-import type { ClientConfig } from "lib/ts/models/config";
+import type { Client } from "lib/ts/models/config";
 import * as mpCamera from "@mediapipe/camera_utils";
 
 export let faceLandmarks: mpFaceMesh.NormalizedLandmarkList
-export let clientConfig: ClientConfig
+export let clientConfig: Client
 
 let videoElem: HTMLVideoElement
 

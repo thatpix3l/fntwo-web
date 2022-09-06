@@ -21,22 +21,22 @@
 
 import { onMount } from "svelte";
 
-import ModelViewer from "./lib/svelte/ModelViewer/ModelViewer.svelte"
+import ModelViewer from "./lib/svelte/ModelViewer.svelte"
+import Dashboard from "lib/svelte/Dashboard.svelte"
 
 import type * as object from "lib/ts/models/object"
 import * as api from "lib/ts/api"
 import * as helper from "lib/ts/helper"
-import Dashboard from "lib/svelte/UserInterface/Dashboard.svelte"
-import { SceneConfig, ClientConfig, type AppConfig } from "lib/ts/models/config"
+import * as config from "lib/ts/models/config"
 
 let vrmFile: File | undefined
 let vrmFileURL: string = `${location.origin}/api/model`
 let serverVRM: object.VRM
 let serverCamera: object.Camera
 let clientCamera: object.Camera
-let appConfig: AppConfig
-let sceneConfig: SceneConfig
-let clientConfig = new ClientConfig()
+let appConfig: config.App
+let sceneConfig: config.Scene
+let clientConfig = new config.Client()
 
 const updateVRM = async (file: File | undefined) => {
     if(file) {

@@ -1,6 +1,6 @@
-import type { SceneConfig } from "./models/config"
+import type * as config from "lib/ts/models/config"
 
-export type receiverInfo = {
+export type receiver = {
     active: string
     available: string[]
 }
@@ -21,11 +21,11 @@ export let GetScene = async () => {
     const response = await fetch("/api/config/scene")
     throwFetch(response)
     
-    return await response.json() as SceneConfig
+    return await response.json() as config.Scene
 }
 
 export let SetScene = async () => {
-    const response = await fetch("/api/config/scene/update", {method: "PUT"})
+    const response = await fetch("/api/config/scene", {method: "PUT"})
     throwFetch(response)
 }
 
@@ -37,18 +37,23 @@ export let GetVRM = async () => {
 }
 
 export let SetVRM = async (file: File) => {
-    const response = await fetch("/api/model/update", { method: "PUT", body: file })
+    const response = await fetch("/api/model", { method: "PUT", body: file })
     throwFetch(response)
 }
 
 export const GetAvailableReceivers = async () => {
-    const response = await fetch("/api/receiver/available")
+    const response = await fetch("/api/receivers")
     throwFetch(response)
     
-    return await response.json() as receiverInfo
+    return await response.json()
 }
 
 export const SetActiveReceiver = async (receiverName: string) => {
-    const response = await fetch("/api/receiver/active/update", { method: "PUT", body: receiverName })
+    const response = await fetch(
+        "/api/receivers",
+        {
+            method: "PATCH",
+            body: JSON.stringify({active: receiverName} as receiver)
+        })
     throwFetch(response)
 }

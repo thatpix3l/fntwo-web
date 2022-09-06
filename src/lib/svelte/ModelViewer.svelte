@@ -8,7 +8,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 import type * as object from "lib/ts/models/object"
 import * as helper from "lib/ts/helper"
-import type { ClientConfig } from "lib/ts/models/config";
+import type * as config from "lib/ts/models/config";
 
 export let rendererWidth: number = 1920
 export let rendererHeight: number = 1080
@@ -17,7 +17,7 @@ export let vrmTransformation: object.VRM | undefined
 export let inputCamera: object.Camera | undefined
 export let outputCamera: object.Camera
 export let vrmFileURL: string
-export let clientConfig: ClientConfig
+export let clientConfig: config.Client
 
 // Key listener
 const keyListener = new helper.KeyListener()

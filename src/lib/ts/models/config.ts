@@ -1,6 +1,6 @@
 import type { Camera } from "lib/ts/models/object"
 
-export type AppConfig = {
+export type App = {
     [key: string]: any
     vmc_listen: string
     fm3d_listen: string
@@ -14,7 +14,7 @@ export type AppConfig = {
     receiver: string
 }
 
-export class SceneConfig {
+export class Scene {
 
     camera: Camera = {
         gaze_from: {
@@ -32,7 +32,7 @@ export class SceneConfig {
 
 }
 
-export class ClientConfig {
+export class Client {
     show_grid: boolean = false
     track_face: boolean = false
 }
