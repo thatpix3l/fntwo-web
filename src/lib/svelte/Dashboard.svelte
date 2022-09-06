@@ -29,19 +29,26 @@
 </style>
 
 <script lang="ts">
+// Svelte components
 import Button from "lib/svelte/Components/Button.svelte"
-import ConfigViewer from "lib/svelte/Components/ConfigViewer.svelte"
 import RadioButtons from "lib/svelte/Components/RadioButtons.svelte"
 import Switch from "lib/svelte/Components/Switch.svelte"
 import Tabs from "lib/svelte/Components/Tabs.svelte"
+import ValuePreviewer from "lib/svelte/Components/ValuePreviewer.svelte";
+import MenuList from "lib/svelte/Components/MenuList.svelte";
 
+// TypeScript imports
 import * as api from "lib/ts/api"
 import type * as config from "lib/ts/models/config"
 
+// Exported props
 export let vrmFile: File | undefined
 export let sceneConfig: config.Scene | undefined
 export let appConfig: config.App | undefined
 export let clientConfig: config.Client
+
+let appConfigValue: any
+let sceneConfigValue: any
 
 let isDraggedInto: Boolean
 let inputElem: HTMLInputElement
@@ -102,10 +109,16 @@ const setScene = async () => {
 
         <Tabs tabNames={["App", "Scene"]} bind:currentTab={statusTab}/>
 
-        {#if statusTab === "App"}
-        <ConfigViewer config={appConfig} />
-        {:else if statusTab === "Scene"}
-        <ConfigViewer config={sceneConfig}/>
+        {#if statusTab === "App" && appConfig !== undefined}
+        <ValuePreviewer value={appConfigValue}>
+            <MenuList name="app config" root={appConfig} bind:value={appConfigValue}/>
+        </ValuePreviewer>
+
+        {:else if statusTab === "Scene" && sceneConfig !== undefined}
+        <ValuePreviewer value={sceneConfigValue}>
+            <MenuList name="scene config" root={sceneConfig} bind:value={sceneConfigValue}/>
+        </ValuePreviewer>
+    
         {/if}
 
     </div>
