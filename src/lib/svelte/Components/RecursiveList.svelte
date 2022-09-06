@@ -29,7 +29,7 @@ Object.entries(root).map(([key, value]) => {
 })
 
 $: {
-    if(typeof branches[selected].value !== "object") {
+    if(branches[selected] && typeof branches[selected].value !== "object") {
         value = branches[selected].value
     }
 }
