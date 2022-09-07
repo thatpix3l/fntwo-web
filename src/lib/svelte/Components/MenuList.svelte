@@ -15,5 +15,5 @@ export let value: any
     
 <aside class="menu">
     <p class="menu-label">{name}</p>
-    <RecursiveList bind:root bind:value/>
+    <RecursiveList root={root} bind:value/>
 </aside>

@@ -5,44 +5,54 @@
 </style>
 
 <script lang="ts">
+
 import * as helper from "lib/ts/helper"
 
-type objectWrapper = {
-    key: string
-    value: any
+type rootObject = {
+    [key: string]: any
 }
 
-type objects = {
-    [key: string]: objectWrapper
-}
-    
-export let root: {[key: string]: any}
-export let selected: string = ""
+export let root: rootObject
 export let value: any
+export let selectedID: string = ""
 
-let branches: objects = {}
-Object.entries(root).map(([key, value]) => {
-    branches[helper.randomID()] = {
-        key: key,
-        value: value
-    }
-})
+// Given an object, return a 2D array pair of unique ID and associated key within the object
+const generateKeyIDs = (rootObj: rootObject) => {
+    return Object.keys(rootObj).map(key => {
+        return [helper.randomID(), key]
+    })
+}
 
+let keyIDMappings: string[][] = []
 $: {
-    if(branches[selected] && typeof branches[selected].value !== "object") {
-        value = branches[selected].value
+
+    // Every time the root object is refreshed and has a different length,
+    // update the 2D array of id-to-key mappings
+    const newMappings = generateKeyIDs(root)
+    if(keyIDMappings.length !== newMappings.length) {
+        keyIDMappings = newMappings
     }
+    
+    // Every time the mappings are updated and an item has been selected from this depth, change prop value
+    for(const [id, key] of keyIDMappings) {
+        if(selectedID === id && typeof root[key] !== "object") {
+            value = root[key]
+        }
+    }
+
 }
 
 </script>
     
 <ul class="menu-list">
-    {#each Object.entries(branches) as [id, branch]}
+    {#each keyIDMappings as [id, key]}
     <li>
-        <a class:is-active={selected === id} on:click={() => {selected = id}}>{branch.key}</a>
-        {#if typeof branch.value === "object"}
-            <svelte:self root={branch.value} bind:selected bind:value/>
+        <a class:is-active={selectedID === id} on:click={() => {selectedID = id}}>{key}</a>
+
+        {#if typeof root[key] === "object"}
+            <svelte:self root={root[key]} bind:value bind:selectedID/>
         {/if}
+
     </li>
     {/each}
 </ul>
