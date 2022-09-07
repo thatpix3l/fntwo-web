@@ -10,7 +10,7 @@ export let value: any
 
 </script>
 
-<div class="columns">
+<div class="columns box">
 
     <div class="column">
         <slot></slot>

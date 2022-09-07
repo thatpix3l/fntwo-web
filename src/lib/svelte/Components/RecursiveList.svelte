@@ -2,6 +2,10 @@
 
 @import "bulma/css/bulma.css";
 
+a {
+    transition: background-color .1s ease-in-out 0s;
+}
+
 </style>
 
 <script lang="ts">
@@ -47,6 +51,7 @@ $: {
 <ul class="menu-list">
     {#each keyIDMappings as [id, key]}
     <li>
+        <!-- svelte-ignore a11y-missing-attribute -->
         <a class:is-active={selectedID === id} on:click={() => {selectedID = id}}>{key}</a>
 
         {#if typeof root[key] === "object"}
