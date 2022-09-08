@@ -34,5 +34,4 @@ export class Scene {
 
 export class Client {
     show_grid: boolean = false
-    track_face: boolean = false
 }

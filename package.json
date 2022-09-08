@@ -10,8 +10,6 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
-    "@mediapipe/camera_utils": "^0.3.1640029074",
-    "@mediapipe/face_mesh": "^0.4.1633559619",
     "@pixiv/three-vrm": "^0.6.11",
     "@sveltejs/vite-plugin-svelte": "^1.0.1",
     "@tsconfig/svelte": "^3.0.0",

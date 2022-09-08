@@ -41,7 +41,6 @@ import MenuList from "lib/svelte/Components/MenuList.svelte";
 import * as api from "lib/ts/api"
 import type * as config from "lib/ts/models/config"
 
-// Exported props
 export let vrmFile: File | undefined
 export let sceneConfig: config.Scene | undefined
 export let appConfig: config.App | undefined
@@ -137,7 +136,6 @@ const setScene = async () => {
 
         <div>
             <Switch label="Grid" bind:checked={clientConfig.show_grid} />
-            <Switch label="Track Face" bind:checked={clientConfig.track_face} />
             {#if receiverInfo}
             <div class="is-vcentered">
                 <RadioButtons values={receiverInfo.available} bind:selected={receiverInfo.active} />
