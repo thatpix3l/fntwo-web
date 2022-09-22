@@ -17,26 +17,26 @@ const throwFetch = (response: Response) => {
     }
 }
 
-export let GetScene = async () => {
+export const GetScene = async () => {
     const response = await fetch("/api/config/scene")
     throwFetch(response)
     
     return await response.json() as config.Scene
 }
 
-export let SetScene = async () => {
+export const SetScene = async () => {
     const response = await fetch("/api/config/scene", {method: "PUT"})
     throwFetch(response)
 }
 
-export let GetVRM = async () => {
+export const GetVRM = async () => {
     const response = await fetch("/api/model")
     throwFetch(response)
 
     return await response.blob()
 }
 
-export let SetVRM = async (file: File) => {
+export const SetVRM = async (file: File) => {
     const response = await fetch("/api/model", { method: "PUT", body: file })
     throwFetch(response)
 }
@@ -45,7 +45,7 @@ export const GetAvailableReceivers = async () => {
     const response = await fetch("/api/receivers")
     throwFetch(response)
     
-    return await response.json()
+    return await response.json() as receiver
 }
 
 export const SetActiveReceiver = async (receiverName: string) => {
