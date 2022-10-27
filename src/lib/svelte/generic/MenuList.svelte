@@ -5,7 +5,7 @@
 </style>
 
 <script lang="ts">
-import RecursiveList from "lib/svelte/Components/RecursiveList.svelte"
+import RecursiveList from "lib/svelte/generic/RecursiveList.svelte"
 
 export let name: string
 export let root: {[key: string]: any}

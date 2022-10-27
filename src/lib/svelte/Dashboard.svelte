@@ -30,12 +30,12 @@
 
 <script lang="ts">
 // Svelte components
-import Button from "lib/svelte/Components/Button.svelte"
-import RadioButtons from "lib/svelte/Components/RadioButtons.svelte"
-import Switch from "lib/svelte/Components/Switch.svelte"
-import Tabs from "lib/svelte/Components/Tabs.svelte"
-import ValuePreviewer from "lib/svelte/Components/ValuePreviewer.svelte";
-import MenuList from "lib/svelte/Components/MenuList.svelte";
+import Button from "lib/svelte/generic/Button.svelte"
+import Switch from "lib/svelte/generic/Switch.svelte"
+import Tabs from "lib/svelte/generic/Tabs.svelte"
+import ValuePreviewer from "lib/svelte/generic/ValuePreviewer.svelte";
+import MenuList from "lib/svelte/generic/MenuList.svelte";
+import ReceiverOptions from "./unique/ReceiverOptions.svelte";
 
 // TypeScript imports
 import * as api from "lib/ts/api"
@@ -72,27 +72,21 @@ let statusTab: string = "App"
 // Current tab name for controls
 let controlsTab: string = "Model"
 
-// Available receivers to switch between from API server; does not change during runtime
-let receiverInfo: api.receiver
-(async () => {
-    receiverInfo = await api.GetAvailableReceivers()
-})()
-
-let setSceneStatus = new api.Status()
+const sceneStatus = new api.Status()
 const setScene = async () => {
 
-    clearTimeout(setSceneStatus.successTimeout)
-    setSceneStatus.waiting = true
+    clearTimeout(sceneStatus.successTimeout)
+    sceneStatus.waiting = true
 
     try {
         await api.SetScene()
-        setSceneStatus.success = true
+        sceneStatus.success = true
     } catch {
-        setSceneStatus.success = false
+        sceneStatus.success = false
     }
-    setSceneStatus.waiting = false
+    sceneStatus.waiting = false
     
-    setSceneStatus.successTimeout = setTimeout(() => setSceneStatus.success = undefined, 750)
+    sceneStatus.successTimeout = setTimeout(() => sceneStatus.success = undefined, 750)
 
 }
 
@@ -128,23 +122,19 @@ const setScene = async () => {
     <div class="box has-background-light">
         <h1 class="title">Controls</h1>
 
-        <Tabs tabNames={["Model", "Scene"]} bind:currentTab={controlsTab}></Tabs>
+        <Tabs tabNames={["Model", "App", "Scene"]} bind:currentTab={controlsTab}></Tabs>
 
         {#if controlsTab === "Scene"}
-
-        <Button success={setSceneStatus.success} disabled={setSceneStatus.waiting} on:click={setScene}/>
+        <Button success={sceneStatus.success} disabled={sceneStatus.waiting} on:click={setScene}/>
 
         <div>
             <Switch label="Grid" bind:checked={clientConfig.show_grid} />
-            {#if receiverInfo}
-            <div class="is-vcentered">
-                <RadioButtons values={receiverInfo.available} bind:selected={receiverInfo.active} />
-            </div>
-            {/if}
         </div>
+    
+        {:else if controlsTab === "App"}
+        <ReceiverOptions />
 
         {:else if controlsTab === "Model"}
-
         <div id="model-tab-content">
 
             <div class="box vrm-upload-box"
