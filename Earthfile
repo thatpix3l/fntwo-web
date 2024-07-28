@@ -14,7 +14,7 @@ build:
 
 save:
     FROM +build
-    SAVE ARTIFACT build/* AS LOCAL artifact/
+    SAVE ARTIFACT build/* AS LOCAL artifact
 
 all:
     BUILD +save
