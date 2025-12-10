@@ -1,11 +1,12 @@
 import type { JSX } from "solid-js";
+import type * as common from "@scope/common";
 
 interface ShadowProps {
-	color?: string;
+	color?: common.css.Color;
 }
 
 interface BorderProps {
-	color?: string;
+	color?: common.css.Color;
 }
 
 export interface CardProps {
