@@ -36,6 +36,7 @@
 }
 
 .nb-card {
+	z-index: 0;
 	position: relative;
 }
 
@@ -49,6 +50,11 @@
 
 .nb-card.nb-card-border > .nb-card-body {
 	border: var(--nb-card-border-width) solid var(--nb-card-border-color);
+}
+
+.nb-card.nb-card-shadow {
+	border-right: var(--nb-card-shadow-offset) solid transparent;
+	border-bottom: var(--nb-card-shadow-offset) solid transparent;
 }
 
 .nb-card.nb-card-shadow::after {
