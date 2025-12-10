@@ -1,0 +1,8 @@
+{
+	"name": "@scope/common",
+	"compilerOptions": {
+		"lib": ["esnext"],
+		"module": "ESNext"
+	},
+	"exports": "./mod.ts"
+}

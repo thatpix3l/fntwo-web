@@ -1,0 +1,35 @@
+{
+	"nodeModulesDir": "auto",
+	"workspace": ["./workspace/web", "./workspace/dev", "./workspace/common"],
+	"compilerOptions": {
+		/* Performance */
+		"skipLibCheck": true,
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"erasableSyntaxOnly": true,
+		"noFallthroughCasesInSwitch": true
+	},
+	"fmt": {
+		"include": [
+			"workspace",
+			"deno.json*"
+		],
+		"useTabs": true,
+		"bracePosition": "sameLine",
+		"jsx.bracketPosition": "nextLine",
+		"jsx.multiLineParens": "always",
+		"newLineKind": "lf",
+		"nextControlFlowPosition": "nextLine",
+		"operatorPosition": "nextLine",
+		"quoteProps": "consistent",
+		"semiColons": true,
+		"singleQuote": false,
+		"spaceSurroundingProperties": true,
+		"trailingCommas": "onlyMultiLine",
+		"spaceAround": false,
+		"useBraces": "whenNotSingleLine"
+	}
+}

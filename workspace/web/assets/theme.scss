@@ -1,0 +1,49 @@
+.nb-card {
+	position: relative;
+}
+
+.nb-card > .nb-card-body {
+	position: relative;
+	background: var(--nb-card-background);
+	width: 100%;
+	height: 100%;
+
+	transition: translate 0.1s ease-in-out;
+}
+
+.nb-card.nb-card-border > .nb-card-body {
+	border: var(--nb-card-border-width) solid var(--nb-card-border-color);
+}
+
+.nb-card.nb-card-shadow::after {
+	content: "";
+	inset: 0;
+	position: absolute;
+	z-index: -1;
+
+	background: var(--nb-card-shadow-background);
+	translate: var(--nb-card-shadow-offset) var(--nb-card-shadow-offset);
+}
+
+.nb-card.nb-card-press > .nb-card-body {
+	translate: var(--nb-card-shadow-offset) var(--nb-card-shadow-offset);
+}
+
+.nb-card.nb-card-round::after, .nb-card.nb-card-round > .nb-card-body {
+	border-radius: var(--nb-card-border-radius);
+}
+
+.nb-card > .nb-card-body > progress.nb-progress {
+	-webkit-appearance: none;
+	appearance: none;
+	background: none;
+	border: none;
+	width: 100%;
+	display: block;
+
+	&::-webkit-progress-value, &::-moz-progress-bar {
+		background: var(--nb-progress-value-color);
+		border-right: var(--nb-progress-border-width) solid
+			var(--nb-progress-border-color);
+	}
+}

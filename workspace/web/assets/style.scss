@@ -1,0 +1,79 @@
+@import url("./boilerplate.css");
+@import url("./theme.scss");
+
+@font-face {
+	font-family: "Sora";
+	src: url("./Sora.ttf");
+}
+
+@function var-or($name) {
+	@return var(--#{$name}, --#{$name}-default);
+}
+
+@function t-props($prop-name, $duration-var-name, $easing-var-name) {
+	@return #{$prop-name} var-or($duration-var-name) var-or($easing-var-name);
+}
+
+:root {
+	font-family: "Sora";
+
+	--nb-card-border-radius: 10px;
+
+	--t-duration-default: 0.1s;
+	--t-timing-default: ease-in-out;
+
+	--card-border-width-default: 10px;
+
+	/* BEGIN palette */
+	--palette-neutral-light: #f5efff;
+	--palette-neutral-medium: rgb(164, 167, 175);
+	--palette-neutral-dark: #5e5e5e;
+	--palette-light: var(--palette-neutral-light);
+	--palette-dark: var(--palette-neutral-dark);
+	--palette-accent: #7371fc;
+	--palette-accept: #48e5c2;
+	--palette-deny: #ed254e;
+	/* END palette */
+
+	/* Defaults used extensively throughout. */
+	--nb-border-width: 2px;
+	--nb-shadow-offset: calc(var(--nb-border-width) * 1.5);
+	--nb-shadow-color: var(--palette-dark);
+
+	/* Defaults for cards. */
+	--nb-card-border-width: var(--nb-border-width);
+	--nb-card-border-color: var(--palette-dark);
+	--nb-card-background: var(--palette-light);
+	--nb-card-shadow-offset: var(--nb-shadow-offset);
+	--nb-card-shadow-background: var(--palette-dark);
+	--nb-card-border-color: var(--palette-dark);
+
+	/* Defaults for progress bars*/
+	--nb-progress-shadow-color: var(--nb-shadow-color);
+	--nb-progress-border-width: var(--nb-border-width);
+	--nb-progress-border-color: var(--palette-dark);
+	--nb-progress-max-color: var(--palette-light);
+	--nb-progress-value-color: var(--palette-accent);
+	--nb-progress-shadow-offset: var(--nb-shadow-offset);
+}
+
+.stack {
+	position: relative;
+}
+
+.stack > * {
+	position: absolute;
+}
+
+.dashboard {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: stretch;
+}
+
+.dashboard > * {
+	flex-grow: 1;
+	margin: 100px;
+}

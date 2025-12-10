@@ -1,0 +1,19 @@
+{
+	"name": "@scope/web",
+	"compilerOptions": {
+		"lib": ["esnext", "DOM", "DOM.Iterable", "decorators"],
+		"module": "ESNext",
+		"types": ["@types/three"],
+
+		/* Bundler mode */
+		"jsx": "preserve",
+		"jsxImportSource": "solid-js"
+	},
+	"imports": {
+		"@pixiv/three-vrm": "npm:@pixiv/three-vrm@^3.4.4",
+		"@types/three": "npm:@types/three@^0.181.0",
+		"solid-js": "npm:solid-js@^1.9.10",
+		"three": "npm:three@^0.181.2"
+	},
+	"exports": "./mod.ts"
+}
