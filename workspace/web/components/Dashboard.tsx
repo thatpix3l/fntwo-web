@@ -11,7 +11,7 @@ interface Props {
  * Control center for changing settings of the current scene,
  * (un)loading `VRM` models, saving, loading, etc.
  */
-export default function (props: Props) {
+function Dashboard(props: Props) {
 	const [fov, setFov] = props.fovSignal;
 	const [near, setNear] = props.nearSignal;
 	const [far, setFar] = props.farSignal;
@@ -31,3 +31,5 @@ export default function (props: Props) {
 		</div>
 	);
 }
+
+export default Dashboard;
