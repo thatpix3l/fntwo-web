@@ -11,15 +11,31 @@ interface BorderProps {
 
 export interface CardProps {
 	children: JSX.Element;
+	/**
+	 * Assign empty object for default shadow styling.
+	 */
 	shadow?: ShadowProps;
+
+	/**
+	 * Assign empty object for default border styling.
+	 */
 	border?: BorderProps;
+
+	/**
+	 * Whether the card should look pressed.
+	 */
 	press?: boolean;
+
+	/**
+	 * Whether the cornders should be rounded.
+	 */
 	round?: boolean;
 }
 
 /**
- * Primitive that most components use as a base; several visual options are available to change,
- * including whether to add a shadow, show a border, visually "press" the body of the card, or rounded corners.
+ * Primitive that most components use as a base.
+ *
+ * Can modify the shadow, border, "press" state, rounded corners, etc.
  */
 export function Card(props: CardProps) {
 	return (
