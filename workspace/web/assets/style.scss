@@ -1,11 +1,6 @@
 @import url("./boilerplate.css");
 @import url("./theme.scss");
 
-@font-face {
-	font-family: "Sora";
-	src: url("./Sora.ttf");
-}
-
 @function var-or($name) {
 	@return var(--#{$name}, --#{$name}-default);
 }
